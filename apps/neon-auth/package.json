@@ -1,0 +1,33 @@
+{
+  "name": "neon-auth",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3010",
+    "build": "next build",
+    "start": "next start",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@neondatabase/neon-auth-next": "0.1.0-alpha.24",
+    "@neondatabase/neon-auth-ui": "0.1.0-alpha.2",
+    "@neondatabase/neon-js": "0.1.0-beta.21",
+    "@repo/design-system": "workspace:*",
+    "@repo/neon-auth": "workspace:*",
+    "@repo/prisma-neon": "workspace:*",
+    "lucide-react": "^0.556.0",
+    "next": "16.0.10",
+    "next-themes": "^0.4.6",
+    "react": "19.2.1",
+    "react-dom": "19.2.1"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@tailwindcss/postcss": "^4.1.17",
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "tailwindcss": "^4.1.17",
+    "typescript": "^5.9.3"
+  }
+}

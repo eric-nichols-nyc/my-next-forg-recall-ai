@@ -1,22 +1,32 @@
 import "server-only";
 
-import { neonConfig } from "@neondatabase/serverless";
-import { PrismaNeon } from "@prisma/adapter-neon";
-import ws from "ws";
-import { PrismaClient } from "./generated/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
+import { PrismaClient } from "./generated/prisma/client";
 import { keys } from "./keys";
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-neonConfig.webSocketConstructor = ws;
+function createPrismaClient() {
+  const pool = new Pool({ connectionString: keys().DATABASE_URL });
+  const adapter = new PrismaPg(pool);
 
-const adapter = new PrismaNeon({ connectionString: keys().DATABASE_URL });
+  return new PrismaClient({
+    adapter,
+    log:
+      process.env.NODE_ENV === "development"
+        ? ["query", "error", "warn"]
+        : ["error"],
+  });
+}
 
-export const database = globalForPrisma.prisma || new PrismaClient({ adapter });
+export const database = globalForPrisma.prisma || createPrismaClient();
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = database;
 }
 
 // biome-ignore lint/performance/noBarrelFile: re-exporting
-export * from "./generated/client";
+export * from "./generated/prisma/client";
+// biome-ignore lint/performance/noBarrelFile: re-exporting
+export * from "./generated/prisma/client";
