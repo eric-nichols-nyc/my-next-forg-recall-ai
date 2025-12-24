@@ -1,6 +1,22 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// generator client {
+//   provider = "prisma-client"
+//   output   = "../generated"
+// }
+
+// datasource db {
+//   provider     = "postgresql"
+//   relationMode = "prisma"
+// }
+
+// // This is a stub model.
+// // Delete it and add your own Prisma models.
+// model Page {
+//   id   Int    @id @default(autoincrement())
+//   name String
+// }
 generator client {
   provider = "prisma-client"
   output   = "../generated"
@@ -11,9 +27,194 @@ datasource db {
   relationMode = "prisma"
 }
 
-// This is a stub model.
-// Delete it and add your own Prisma models.
-model Page {
-  id   Int    @id @default(autoincrement())
-  name String
+enum SourceType {
+  pdf
+  web
+  youtube
+}
+
+enum ChatRole {
+  user
+  assistant
+  system
+}
+
+model Source {
+  id        String     @id @default(uuid()) @db.Uuid
+  ownerId   String     @db.Text
+  type      SourceType
+
+  title     String?    @db.Text
+  url       String?    @db.Text
+  filename  String?    @db.Text
+  sha256    String?    @db.Text
+
+  createdAt DateTime   @default(now()) @db.Timestamptz(6)
+
+  texts     SourceText[]
+  notes     Note?
+  flashcards Flashcard[]
+  quizzes   Quiz[]
+  threads   ChatThread[]
+  chunks    Chunk[]
+
+  @@index([ownerId])
+  @@index([type])
+  @@unique([sha256])
+}
+
+model SourceText {
+  id        String   @id @default(uuid()) @db.Uuid
+  ownerId   String   @db.Text
+
+  sourceId  String   @db.Uuid
+  source    Source   @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  ordinal   Int
+
+  // PDF-only
+  pageNumber Int?
+
+  // YouTube-only
+  startSec  Int?
+  endSec    Int?
+
+  text      String   @db.Text
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  // optional backlinks
+  flashcards Flashcard[]
+  questions  QuizQuestion[]
+  chunks     Chunk[]
+
+  @@unique([sourceId, ordinal])
+  @@index([sourceId])
+  @@index([ownerId])
+}
+
+model Note {
+  id        String   @id @default(uuid()) @db.Uuid
+  ownerId   String   @db.Text
+
+  sourceId  String   @unique @db.Uuid
+  source    Source   @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  model     String?  @db.Text
+  summaryMd String   @db.Text
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([ownerId])
+}
+
+model Flashcard {
+  id        String    @id @default(uuid()) @db.Uuid
+  ownerId   String    @db.Text
+
+  sourceId  String    @db.Uuid
+  source    Source    @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  front     String    @db.Text
+  back      String    @db.Text
+
+  sourceTextId String?   @db.Uuid
+  sourceText   SourceText? @relation(fields: [sourceTextId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+
+  @@index([sourceId])
+  @@index([sourceTextId])
+  @@index([ownerId])
+}
+
+model Quiz {
+  id        String   @id @default(uuid()) @db.Uuid
+  ownerId   String   @db.Text
+
+  sourceId  String   @db.Uuid
+  source    Source   @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  title     String   @db.Text
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  questions QuizQuestion[]
+
+  @@index([sourceId])
+  @@index([ownerId])
+}
+
+model QuizQuestion {
+  id          String   @id @default(uuid()) @db.Uuid
+  ownerId     String   @db.Text
+
+  quizId      String   @db.Uuid
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  prompt      String   @db.Text
+  choices     Json
+  correctIndex Int
+  explanation String?  @db.Text
+
+  sourceTextId String?    @db.Uuid
+  sourceText   SourceText? @relation(fields: [sourceTextId], references: [id], onDelete: SetNull)
+
+  @@index([quizId])
+  @@index([sourceTextId])
+  @@index([ownerId])
+}
+
+model ChatThread {
+  id        String      @id @default(uuid()) @db.Uuid
+  ownerId   String      @db.Text
+
+  sourceId  String      @db.Uuid
+  source    Source      @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime    @default(now()) @db.Timestamptz(6)
+  messages  ChatMessage[]
+
+  @@index([sourceId])
+  @@index([ownerId])
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid()) @db.Uuid
+  ownerId   String   @db.Text
+
+  threadId  String   @db.Uuid
+  thread    ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  role      ChatRole
+  content   String   @db.Text
+  citations Json?
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([threadId, createdAt])
+  @@index([ownerId])
+}
+
+model Chunk {
+  id         String   @id @default(uuid()) @db.Uuid
+  ownerId    String   @db.Text
+
+  sourceId   String   @db.Uuid
+  source     Source   @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  sourceTextId String?    @db.Uuid
+  sourceText   SourceText? @relation(fields: [sourceTextId], references: [id], onDelete: Cascade)
+
+  chunkIndex Int
+  content    String   @db.Text
+
+  pageNumber Int?
+  startChar  Int?
+  endChar    Int?
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@unique([sourceId, chunkIndex])
+  @@index([sourceId])
+  @@index([sourceTextId])
+  @@index([ownerId])
 }

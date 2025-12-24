@@ -1,94 +1,55 @@
-# App - Next.js Application with Authentication & Database
+# Neon Auth - Next.js Application with Neon Database
 
-A full-stack Next.js 16 application featuring Supabase authentication, Prisma database integration, and server-side validation using Zod.
+A Next.js 16 application demonstrating authentication with Neon database integration using Neon Auth.
 
 ## Features
 
-### 🔐 Authentication
-- **User Sign Up** - Email/password registration with server-side validation
-- **User Login** - Secure authentication with session management
-- **Email Confirmation** - Email verification flow via Supabase
-- **Protected Routes** - Automatic redirects for authenticated/unauthenticated users
-- **Session Management** - Server-side session refresh and cookie handling
-
-### 🗄️ Backend & Database
-- **Supabase Integration** - Authentication and database backend
+- **Neon Auth Integration** - Complete authentication system powered by Neon Auth
+- **Server Actions** - Type-safe sign-up, sign-in, and sign-out actions with Zod validation
+- **Neon Database Integration** - Serverless PostgreSQL via `@repo/prisma-neon`
 - **Prisma ORM** - Type-safe database access via `@repo/database` package
-- **Server Actions** - Form handling with validation using Zod
-- **API Routes** - RESTful endpoints for authentication callbacks
-
-### 🛡️ Security
-- **Server-Side Validation** - Zod schema validation on all form submissions
-- **Route Protection** - Proxy-based middleware for route guarding
-- **Secure Cookies** - HTTP-only cookie management via Supabase SSR
-- **CSRF Protection** - Built-in protection via Next.js Server Actions
+- **Theme Support** - Light/dark mode with `@repo/design-system`
+- **Modern UI** - Built with Tailwind CSS, shadcn/ui components, and Neon Auth UI
+- **Email OTP** - Email-based one-time password authentication
+- **Protected Routes** - Server-side session management and route protection
 
 ## Project Structure
 
 ```
-apps/app/
+apps/neon-auth/
 ├── app/
-│   ├── (auth)/              # Route group for auth pages
-│   │   ├── login/
-│   │   │   └── page.tsx     # Login page
-│   │   └── signup/
-│   │       ├── actions.ts   # Server Action with Zod validation
-│   │       └── page.tsx     # Sign up page
 │   ├── api/
 │   │   └── auth/
-│   │       └── callback/
-│   │           └── route.ts # Email confirmation handler
+│   │       └── [...path]/
+│   │           └── route.ts  # Auth API route handler
+│   ├── auth/
+│   │   └── [path]/
+│   │       └── page.tsx      # Auth pages (sign-in, sign-up, etc.)
+│   ├── account/
+│   │   └── [path]/
+│   │       └── page.tsx      # Account management pages
 │   ├── dashboard/
 │   │   └── page.tsx         # Protected dashboard page
-│   ├── layout.tsx           # Root layout
-│   └── page.tsx             # Home page (redirects to dashboard if logged in)
+│   ├── layout.tsx           # Root layout with NeonAuthUIProvider
+│   ├── page.tsx             # Home page
+│   └── styles.css           # Global styles
 ├── lib/
-│   ├── supabase/
-│   │   ├── client.ts        # Browser Supabase client
-│   │   └── server.ts         # Server Supabase client
-│   └── utils.ts             # Utility functions
-├── __tests__/               # Test files
-├── proxy.ts                 # Route protection middleware (Next.js 16)
+│   └── auth/
+│       ├── actions.ts       # Server actions (sign-up, sign-in, sign-out)
+│       ├── client.ts        # Client-side auth client
+│       └── server.ts        # Server-side auth helpers
 ├── next.config.ts           # Next.js configuration
-└── package.json             # Dependencies and scripts
+├── package.json             # Dependencies and scripts
+└── tsconfig.json            # TypeScript configuration
 ```
-
-## Environment Variables
-
-Create a `.env.local` file in the `apps/app` directory with the following variables:
-
-```env
-# Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
-
-# Optional: Site URL for email redirects
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
-```
-
-### Getting Supabase Credentials
-
-If using local Supabase (recommended for development):
-
-1. Start Supabase locally:
-   ```bash
-   npx supabase start
-   ```
-
-2. Get your credentials:
-   ```bash
-   npx supabase status
-   ```
-
-3. Copy the `API URL` and `anon key` to your `.env.local` file.
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js 18+ and pnpm
-- Docker (for local Supabase)
-- Supabase CLI (for local development)
+- Neon database connection string
+- Neon Auth base URL
 
 ### Installation
 
@@ -97,124 +58,23 @@ If using local Supabase (recommended for development):
    pnpm install
    ```
 
-2. Start local Supabase (if not already running):
-   ```bash
-   npx supabase start
+2. Set up environment variables:
+   Create a `.env.local` file in the `apps/neon-auth` directory:
+   ```env
+   # Neon Auth Configuration
+   NEON_AUTH_BASE_URL=your-neon-auth-base-url
+   NEXT_PUBLIC_SITE_URL=http://localhost:3010
    ```
 
-3. Set up environment variables (see above)
-
-4. Run the development server:
+3. Run the development server:
    ```bash
-   cd apps/app
+   cd apps/neon-auth
    pnpm dev
    ```
 
-5. Open [http://localhost:3000](http://localhost:3000)
+4. Open [http://localhost:3010](http://localhost:3010)
 
-## Authentication Flow
-
-### Sign Up Flow
-
-1. User visits `/signup`
-2. Fills out form with email and password
-3. **Server Action** (`signupAction`) validates input with Zod:
-   - Email: Required, valid email format
-   - Password: 6-72 characters
-4. If validation passes, Supabase creates user account
-5. User receives confirmation email (if email confirmation enabled)
-6. User clicks link → redirected to `/api/auth/callback`
-7. Callback route exchanges code for session
-8. User redirected to dashboard
-
-### Login Flow
-
-1. User visits `/login` (or redirected from protected route)
-2. Enters email and password
-3. Supabase authenticates credentials
-4. Session created and stored in HTTP-only cookies
-5. User redirected to `/dashboard` (or original destination)
-
-### Route Protection
-
-The `proxy.ts` file handles route protection:
-
-- **Public Routes**: `/login`, `/signup`, `/api/auth/callback`
-- **Protected Routes**: All other routes require authentication
-- **Auto-redirects**:
-  - Unauthenticated users → `/login?redirect=<original-path>`
-  - Authenticated users visiting `/`, `/login`, or `/signup` → `/dashboard`
-
-## Backend Integration
-
-### Supabase Client Usage
-
-#### Browser (Client Components)
-
-```typescript
-import { createClient } from "@/lib/supabase/client";
-
-const supabase = createClient();
-const { data, error } = await supabase.auth.getUser();
-```
-
-#### Server (Server Components, Actions, API Routes)
-
-```typescript
-import { createClient } from "@/lib/supabase/server";
-
-const supabase = await createClient();
-const { data, error } = await supabase.auth.getUser();
-```
-
-### Database Access (Prisma)
-
-The app uses the shared `@repo/database` package for database operations:
-
-```typescript
-import { database } from "@repo/database";
-
-// Example: Get all users
-const users = await database.user.findMany();
-```
-
-**Note**: The database package is configured to connect to your Supabase PostgreSQL instance. See `packages/database/README.md` for more details.
-
-## Server Actions
-
-### Sign Up Action
-
-Located in `app/(auth)/signup/actions.ts`:
-
-```typescript
-export async function signupAction(
-  _prevState: SignupState,
-  formData: FormData
-): Promise<SignupState>
-```
-
-**Features:**
-- Zod schema validation
-- Field-level error messages
-- Supabase user creation
-- Email confirmation setup
-
-**Usage:**
-
-```tsx
-import { useActionState } from "react";
-import { signupAction } from "./actions";
-
-const [state, formAction, isPending] = useActionState(signupAction, initialState);
-
-<form action={formAction}>
-  {/* Form fields */}
-</form>
-```
-
-## Development
-
-### Available Scripts
+## Available Scripts
 
 ```bash
 # Start development server
@@ -229,120 +89,134 @@ pnpm start
 # Type checking
 pnpm typecheck
 
-# Run tests
-pnpm test
-
-# Run tests once
-pnpm test:run
-
 # Clean build artifacts
 pnpm clean
 ```
 
-### Testing
+## Authentication
 
-Tests are located in the `__tests__` directory and use Vitest with React Testing Library.
+### Server Actions
 
-Run tests:
-```bash
-pnpm test        # Watch mode
-pnpm test:run    # Single run
+The app includes type-safe server actions for authentication:
+
+#### Sign Up
+
+```typescript
+import { useActionState } from "react";
+import { signUpAction } from "@/lib/auth/actions";
+
+const [state, formAction, isPending] = useActionState(signUpAction, {
+  success: false,
+});
+
+<form action={formAction}>
+  <input name="email" type="email" required />
+  <input name="password" type="password" required />
+  <input name="name" type="text" />
+  <button type="submit" disabled={isPending}>
+    Sign Up
+  </button>
+</form>
 ```
 
-## Architecture
+**Features:**
+- Zod schema validation for email, password, and optional name
+- Field-level error messages
+- Automatic email verification setup
+- Type-safe state management
 
-### Authentication Architecture
+#### Sign In
 
-```
-┌─────────────┐
-│   Browser   │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────────┐
-│  Next.js Proxy  │  ← Route protection & session refresh
-│   (proxy.ts)    │
-└──────┬──────────┘
-       │
-       ▼
-┌─────────────────┐
-│  Supabase SSR   │  ← Session management via cookies
-│   (@supabase/ssr)│
-└──────┬──────────┘
-       │
-       ▼
-┌─────────────────┐
-│  Supabase Auth  │  ← User authentication
-│   (Local/Cloud)  │
-└─────────────────┘
+```typescript
+import { useActionState } from "react";
+import { signInAction } from "@/lib/auth/actions";
+
+const [state, formAction, isPending] = useActionState(signInAction, {
+  success: false,
+});
+
+<form action={formAction}>
+  <input name="email" type="email" required />
+  <input name="password" type="password" required />
+  <button type="submit" disabled={isPending}>
+    Sign In
+  </button>
+</form>
 ```
 
-### Form Validation Flow
+**Features:**
+- Zod schema validation
+- Automatic redirect to dashboard on success
+- Error handling with user-friendly messages
 
-```
-User Input
-    │
-    ▼
-Client-Side HTML5 Validation (required, type, minLength)
-    │
-    ▼
-Form Submission → Server Action
-    │
-    ▼
-Zod Schema Validation
-    │
-    ├─► Invalid → Return field errors
-    │
-    └─► Valid → Supabase API Call
-            │
-            ├─► Error → Return error message
-            │
-            └─► Success → Redirect to dashboard
+#### Sign Out
+
+```typescript
+import { signOutAction } from "@/lib/auth/actions";
+
+<form action={signOutAction}>
+  <button type="submit">Sign Out</button>
+</form>
 ```
 
-## Security Considerations
+**Features:**
+- Clears session and redirects to home page
+- Handles errors gracefully
 
-1. **Server-Side Validation**: All form data is validated on the server using Zod, even if client-side validation exists.
+### Server-Side Auth
 
-2. **HTTP-Only Cookies**: Session tokens are stored in HTTP-only cookies, preventing XSS attacks.
+Get the current session and user on the server:
 
-3. **CSRF Protection**: Next.js Server Actions provide built-in CSRF protection.
+```typescript
+import { getSession } from "@/lib/auth/server";
 
-4. **Route Protection**: The proxy middleware ensures unauthenticated users cannot access protected routes.
+export default async function ProtectedPage() {
+  const { session, user } = await getSession();
 
-5. **Password Requirements**: Enforced via Zod schema (6-72 characters).
+  if (!session) {
+    redirect("/auth/sign-in");
+  }
 
-## Troubleshooting
+  return <div>Welcome, {user?.email}</div>;
+}
+```
 
-### "Connection refused" when connecting to Supabase
+### Client-Side Auth
 
-- Ensure Supabase is running: `npx supabase status`
-- Check that `NEXT_PUBLIC_SUPABASE_URL` matches your local instance
-- Verify Docker is running
+The auth client is available for client components:
 
-### Authentication not working
+```typescript
+import { authClient } from "@/lib/auth/client";
 
-- Check browser console for errors
-- Verify environment variables are set correctly
-- Ensure cookies are not being blocked
-- Check Supabase logs: `npx supabase logs`
+// Use authClient methods in client components
+```
 
-### Database connection issues
+### Auth Routes
 
-- Verify `DATABASE_URL` in `packages/database` is correct
-- Check Prisma schema is up to date: `cd packages/database && pnpm build`
-- Ensure Supabase PostgreSQL is running
+- `/auth/sign-in` - Sign in page
+- `/auth/sign-up` - Sign up page
+- `/auth/[path]` - Other auth flows (handled by Neon Auth UI)
+- `/account/[path]` - Account management pages
+- `/dashboard` - Protected dashboard page
+
+### API Routes
+
+The app includes a catch-all auth API route at `/api/auth/[...path]` that handles all Neon Auth API requests.
 
 ## Related Packages
 
+- `@neondatabase/neon-js` - Neon database and auth client
+- `@neondatabase/neon-auth-next` - Neon Auth Next.js integration
+- `@neondatabase/neon-auth-ui` - Neon Auth UI components
 - `@repo/design-system` - Shared UI components
 - `@repo/database` - Prisma database client
+- `@repo/prisma-neon` - Neon database adapter
 - `@repo/typescript-config` - TypeScript configuration
 
 ## Resources
 
 - [Next.js Documentation](https://nextjs.org/docs)
-- [Supabase Documentation](https://supabase.com/docs)
+- [Neon Documentation](https://neon.tech/docs)
+- [Neon Auth Documentation](https://neon.tech/docs/auth)
 - [Prisma Documentation](https://www.prisma.io/docs)
-- [Zod Documentation](https://zod.dev)
 
