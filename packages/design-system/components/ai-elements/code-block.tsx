@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@repo/components/ui/button";
+import { Button } from "../ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import {

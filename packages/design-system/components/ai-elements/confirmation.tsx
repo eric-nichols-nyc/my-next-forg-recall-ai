@@ -1,7 +1,7 @@
 "use client";
 
-import { Alert, AlertDescription } from "@repo/components/ui/alert";
-import { Button } from "@repo/components/ui/button";
+import { Alert, AlertDescription } from "../ui/alert";
+import { Button } from "../ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import type { ToolUIPart } from "ai";
 import {

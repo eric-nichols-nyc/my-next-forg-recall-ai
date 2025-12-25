@@ -1,18 +1,18 @@
 "use client";
 
-import { Button } from "@repo/components/ui/button";
+import { Button } from "../ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@repo/components/ui/collapsible";
-import { Input } from "@repo/components/ui/input";
+} from "../ui/collapsible";
+import { Input } from "../ui/input";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@repo/components/ui/tooltip";
+} from "../ui/tooltip";
 import { cn } from "@repo/design-system/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";

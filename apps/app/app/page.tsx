@@ -1,6 +1,4 @@
 import { neonAuth } from "@neondatabase/neon-js/auth/next";
-import Link from "next/link";
-import { ModeToggle } from "@repo/design-system/components/mode-toggle";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Card,
@@ -10,6 +8,7 @@ import {
   CardTitle,
 } from "@repo/design-system/components/ui/card";
 import { Database } from "lucide-react";
+import Link from "next/link";
 
 const HomePage = async () => {
   const { session } = await neonAuth();
@@ -31,10 +30,7 @@ const HomePage = async () => {
           <p className="text-center text-muted-foreground text-sm">
             This app demonstrates authentication with Neon database integration.
           </p>
-          <div className="flex justify-center">
-            <ModeToggle />
-          </div>
-          <Button className="w-full" asChild>
+          <Button asChild className="w-full">
             <Link href={isLoggedIn ? "/notes" : "/auth/sign-in"}>
               {isLoggedIn ? "Get Started" : "Sign In"}
             </Link>

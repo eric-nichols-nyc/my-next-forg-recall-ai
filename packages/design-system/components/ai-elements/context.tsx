@@ -1,12 +1,12 @@
 "use client";
 
-import { Button } from "@repo/components/ui/button";
+import { Button } from "../ui/button";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "@repo/components/ui/hover-card";
-import { Progress } from "@repo/components/ui/progress";
+} from "../ui/hover-card";
+import { Progress } from "../ui/progress";
 import { cn } from "@repo/design-system/lib/utils";
 import type { LanguageModelUsage } from "ai";
 import { type ComponentProps, createContext, useContext } from "react";

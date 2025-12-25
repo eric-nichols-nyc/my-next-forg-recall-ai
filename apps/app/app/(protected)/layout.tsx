@@ -1,17 +1,21 @@
 import { neonAuth } from "@neondatabase/neon-js/auth/next";
+import { Button } from "@repo/design-system/components/ui/button";
+import { SidebarFooter } from "@repo/design-system/components/ui/sidebar";
+import {
+  ArrowUp,
+  FileText,
+  Folder,
+  Infinity as InfinityIcon,
+  LayoutDashboard,
+  MessageSquare,
+  Settings,
+  Star,
+} from "lucide-react";
 import { redirect } from "next/navigation";
-import { LayoutDashboard, FileText, Settings, User } from "lucide-react";
 import {
   DashboardLayout,
   DashboardSidebarHeader,
-} from "@repo/design-system";
-import { ModeToggle } from "@repo/design-system/components/mode-toggle";
-import { UserButton } from "@neondatabase/neon-js/auth/react/ui";
-import {
-  SidebarFooter,
-  SidebarMenu,
-  SidebarMenuItem,
-} from "@repo/design-system/components/ui/sidebar";
+} from "@/components/dashboard-layout";
 
 export default async function ProtectedLayout({
   children,
@@ -31,48 +35,63 @@ export default async function ProtectedLayout({
       icon: <LayoutDashboard />,
     },
     {
+      title: "Folders",
+      url: "/folders",
+      icon: <Folder />,
+    },
+    {
       title: "Notes",
       url: "/notes",
       icon: <FileText />,
     },
-  ];
-
-  const accountItems = [
     {
-      title: "Account",
-      url: "/account/settings",
+      title: "Focus",
+      url: "/focus",
+      icon: <Star />,
+    },
+    {
+      title: "Chat",
+      url: "/chat",
+      icon: <MessageSquare />,
+    },
+    {
+      title: "Settings",
+      url: "/settings",
       icon: <Settings />,
     },
   ];
 
   return (
     <DashboardLayout
-      sidebarHeader={
-        <DashboardSidebarHeader
-          logo={
-            <div className="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-              <User className="size-4" />
-            </div>
-          }
-          title="Recall AI"
-          subtitle="Learning Platform"
-          href="/dashboard"
-        />
-      }
       navigationItems={navItems}
-      accountItems={accountItems}
       sidebarFooter={
-        <SidebarFooter>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <div className="flex items-center justify-between w-full px-2">
-                <UserButton size="icon" />
-              </div>
-            </SidebarMenuItem>
-          </SidebarMenu>
+        <SidebarFooter className="space-y-4">
+          <Button className="w-full bg-purple-600 text-white hover:bg-purple-700">
+            <ArrowUp className="mr-2 size-4" />
+            Upgrade to Premium
+          </Button>
+          <div className="flex items-center gap-3 px-2">
+            <div className="flex size-10 items-center justify-center rounded-full bg-teal-500 font-semibold text-white">
+              E
+            </div>
+            <div className="flex min-w-0 flex-1 flex-col">
+              <span className="truncate font-medium">Eric Nichols</span>
+              <span className="text-muted-foreground text-xs">Basic</span>
+            </div>
+          </div>
         </SidebarFooter>
       }
-      headerActions={<ModeToggle />}
+      sidebarHeader={
+        <DashboardSidebarHeader
+          href="/dashboard"
+          logo={
+            <div className="flex items-center justify-center">
+              <InfinityIcon className="size-5" />
+            </div>
+          }
+          title="LinkLearn"
+        />
+      }
     >
       {children}
     </DashboardLayout>

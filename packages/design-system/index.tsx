@@ -25,10 +25,3 @@ export const DesignSystemProvider = ({
   </ThemeProvider>
 );
 
-export {
-  DashboardLayout,
-  DashboardSidebarHeader,
-  type DashboardLayoutProps,
-  type DashboardSidebarHeaderProps,
-  type NavigationItem,
-} from "./components/dashboard-layout";

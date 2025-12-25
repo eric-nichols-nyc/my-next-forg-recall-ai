@@ -1,17 +1,17 @@
 "use client";
 
-import { Badge } from "@repo/components/ui/badge";
+import { Badge } from "../ui/badge";
 import {
   Carousel,
   type CarouselApi,
   CarouselContent,
   CarouselItem,
-} from "@repo/components/ui/carousel";
+} from "../ui/carousel";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "@repo/components/ui/hover-card";
+} from "../ui/hover-card";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import {
