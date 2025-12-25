@@ -1,3 +1,5 @@
+import { SummariesList } from "./summaries-list";
+
 type NotesContentProps = {
   session: unknown;
   user: { id: string } | null;
@@ -128,8 +130,12 @@ export function NotesContent({ session, user }: NotesContentProps) {
             except to obtain some advantage from it?
           </p>
         </div>
+
+        <div className="mt-8">
+          <h2 className="font-semibold text-xl mb-4">Your summaries</h2>
+          <SummariesList isAuthenticated={!!user} />
+        </div>
       </div>
     </div>
   );
 }
-
