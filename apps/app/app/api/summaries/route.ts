@@ -1,8 +1,7 @@
+import { neonAuth } from "@neondatabase/neon-js/auth/next/server";
 import { generateText } from "ai";
-// @ts-expect-error - pdf-parse v2 has complex exports
-import pdfParse from "pdf-parse";
 import { NextResponse } from "next/server";
-import { neonAuth } from "@neondatabase/neon-js/auth/next";
+import { PDFParse } from "pdf-parse";
 import { model } from "@/lib/ai/models";
 
 export const runtime = "nodejs";
@@ -15,7 +14,10 @@ const errorResponse = (message: string, status = 400) =>
 
 async function getPdfText(file: File) {
   const buffer = Buffer.from(await file.arrayBuffer());
-  return pdfParse(buffer);
+  const parser = new PDFParse({ data: buffer });
+  const textResult = await parser.getText();
+  await parser.destroy();
+  return textResult.text;
 }
 
 const truncateContent = (content: string, max = 12_000) =>
@@ -31,9 +33,11 @@ export async function POST(request: Request) {
 
     const formData = await request.formData();
     const file = formData.get("file");
-    const instructions = (formData.get("instructions") as string | null)?.trim();
+    const instructions = (
+      formData.get("instructions") as string | null
+    )?.trim();
 
-    if (!file || !(file instanceof File)) {
+    if (!(file && file instanceof File)) {
       return errorResponse("No PDF file received.");
     }
 
@@ -46,7 +50,7 @@ export async function POST(request: Request) {
     }
 
     const pdfData = await getPdfText(file);
-    const content = pdfData.text?.trim();
+    const content = pdfData.trim();
 
     if (!content) {
       return errorResponse("Could not extract text from the PDF.");
@@ -75,7 +79,7 @@ export async function POST(request: Request) {
       summary: result.text,
       summaryId,
       documentId,
-      pageCount: pdfData.numpages ?? undefined,
+      pageCount: undefined,
     });
   } catch (error) {
     console.error("Error creating summary", error);
