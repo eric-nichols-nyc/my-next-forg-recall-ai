@@ -1,6 +1,5 @@
 "use client";
 
-import type { ChatStatus, FileUIPart } from "ai";
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -12,10 +11,10 @@ import {
   PromptInputBody,
   PromptInputFooter,
   PromptInputHeader,
+  type PromptInputMessage,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
-  type PromptInputMessage,
 } from "@repo/design-system/components/ai-elements";
 import {
   Alert,
@@ -31,6 +30,7 @@ import {
   CardTitle,
 } from "@repo/design-system/components/ui/card";
 import { Separator } from "@repo/design-system/components/ui/separator";
+import type { ChatStatus, FileUIPart } from "ai";
 import { FileText, Loader2, ShieldCheck, Upload } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -45,9 +45,14 @@ const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 const ALLOWED_TYPES = ["application/pdf"];
 
 const formatBytes = (bytes: number) => {
-  if (bytes === 0) return "0 KB";
+  if (bytes === 0) {
+    return "0 KB";
+  }
   const sizes = ["Bytes", "KB", "MB", "GB"] as const;
-  const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), sizes.length - 1);
+  const i = Math.min(
+    Math.floor(Math.log(bytes) / Math.log(1024)),
+    sizes.length - 1
+  );
   const value = bytes / 1024 ** i;
   return `${value.toFixed(1)} ${sizes[i]}`;
 };
@@ -73,8 +78,12 @@ export function PdfSummaryUploader() {
   const [instructions, setInstructions] = useState<string>("");
 
   const submitStatus: ChatStatus | undefined = useMemo(() => {
-    if (isSubmitting) return "submitted";
-    if (error) return "error";
+    if (isSubmitting) {
+      return "submitted";
+    }
+    if (error) {
+      return "error";
+    }
     return "ready";
   }, [error, isSubmitting]);
 
@@ -88,7 +97,9 @@ export function PdfSummaryUploader() {
     }
 
     if (err.code === "max_file_size") {
-      setError(`Files must be smaller than ${formatBytes(MAX_FILE_SIZE_BYTES)}.`);
+      setError(
+        `Files must be smaller than ${formatBytes(MAX_FILE_SIZE_BYTES)}.`
+      );
       return;
     }
 
@@ -98,6 +109,32 @@ export function PdfSummaryUploader() {
     }
 
     setError(err.message);
+  };
+
+  const extractPdfText = async (file: File): Promise<string> => {
+    const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+
+    // Configure worker for browser - use jsdelivr CDN (more reliable)
+    const version = "5.4.449"; // Match your pdfjs-dist version
+    pdfjs.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${version}/legacy/build/pdf.worker.min.mjs`;
+
+    const arrayBuffer = await file.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+
+    const loadingTask = pdfjs.getDocument({ data: uint8Array });
+    const pdf = await loadingTask.promise;
+
+    let extractedText = "";
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const textContent = await page.getTextContent();
+      const pageText = textContent.items
+        .map((item) => ("str" in item ? item.str : ""))
+        .join(" ");
+      extractedText = `${extractedText}${pageText}\n`;
+    }
+
+    return extractedText;
   };
 
   const handleSubmit = async (message: PromptInputMessage) => {
@@ -121,12 +158,18 @@ export function PdfSummaryUploader() {
       }
 
       if (file.size > MAX_FILE_SIZE_BYTES) {
-        setError(`Files must be smaller than ${formatBytes(MAX_FILE_SIZE_BYTES)}.`);
+        setError(
+          `Files must be smaller than ${formatBytes(MAX_FILE_SIZE_BYTES)}.`
+        );
         throw new Error("File too large");
       }
 
+      // Extract text from PDF on client side
+      const extractedText = await extractPdfText(file);
+
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("extractedText", extractedText);
 
       if (message.text.trim()) {
         formData.append("instructions", message.text.trim());
@@ -137,10 +180,13 @@ export function PdfSummaryUploader() {
         body: formData,
       });
 
-      const payload: SummaryResponse & { error?: string } = await response.json();
+      const payload: SummaryResponse & { error?: string } =
+        await response.json();
 
       if (!response.ok) {
-        setError(payload.error ?? "Unable to generate a summary for this file.");
+        setError(
+          payload.error ?? "Unable to generate a summary for this file."
+        );
         throw new Error(payload.error ?? "Summary request failed");
       }
 
@@ -154,8 +200,10 @@ export function PdfSummaryUploader() {
       setInstructions("");
     } catch (cause) {
       console.error("Summary upload failed", cause);
-      setError((prev) =>
-        prev ?? "Something went wrong while generating your summary. Please try again."
+      setError(
+        (prev) =>
+          prev ??
+          "Something went wrong while generating your summary. Please try again."
       );
       throw cause;
     } finally {
@@ -173,7 +221,8 @@ export function PdfSummaryUploader() {
           <div>
             <CardTitle>Summarize a PDF</CardTitle>
             <CardDescription>
-              Drop a PDF document to generate a markdown summary and see the saved identifiers.
+              Drop a PDF document to generate a markdown summary and see the
+              saved identifiers.
             </CardDescription>
           </div>
         </div>
@@ -181,7 +230,9 @@ export function PdfSummaryUploader() {
       <CardContent className="space-y-4">
         <div className="flex items-center gap-2 rounded-md bg-muted px-3 py-2 text-muted-foreground text-sm">
           <ShieldCheck className="size-4" />
-          <span>Protected route — only signed-in users can request summaries.</span>
+          <span>
+            Protected route — only signed-in users can request summaries.
+          </span>
         </div>
 
         <PromptInput
@@ -252,26 +303,32 @@ export function PdfSummaryUploader() {
           </Alert>
         ) : null}
 
-        {summary && metadata ? (
+        {summary !== null && metadata !== null && (
           <Card className="border-primary/30 bg-primary/5">
             <CardHeader>
               <CardTitle className="flex flex-wrap items-center gap-2 text-lg">
                 Summary ready
-                <Badge variant="secondary">{metadata.pageCount ?? "?"} pages</Badge>
+                <Badge variant="secondary">
+                  {metadata.pageCount ?? "?"} pages
+                </Badge>
               </CardTitle>
               <CardDescription className="flex flex-wrap gap-2">
-                <Badge variant="outline">Summary ID: {metadata.summaryId}</Badge>
-                <Badge variant="outline">Document ID: {metadata.documentId}</Badge>
+                <Badge variant="outline">
+                  Summary ID: {metadata.summaryId}
+                </Badge>
+                <Badge variant="outline">
+                  Document ID: {metadata.documentId}
+                </Badge>
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <Separator />
-              <div className="prose prose-sm max-w-none whitespace-pre-wrap dark:prose-invert">
+              <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
                 {summary}
               </div>
             </CardContent>
           </Card>
-        ) : null}
+        )}
       </CardContent>
     </Card>
   );

@@ -1,7 +1,6 @@
 import { neonAuth } from "@neondatabase/neon-js/auth/next/server";
 import { generateText } from "ai";
 import { NextResponse } from "next/server";
-import { PDFParse } from "pdf-parse";
 import { model } from "@/lib/ai/models";
 
 export const runtime = "nodejs";
@@ -11,14 +10,6 @@ const ALLOWED_TYPES = new Set(["application/pdf"]);
 
 const errorResponse = (message: string, status = 400) =>
   NextResponse.json({ error: message }, { status });
-
-async function getPdfText(file: File) {
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const parser = new PDFParse({ data: buffer });
-  const textResult = await parser.getText();
-  await parser.destroy();
-  return textResult.text;
-}
 
 const truncateContent = (content: string, max = 12_000) =>
   content.length > max ? `${content.slice(0, max)}\n\n...[truncated]` : content;
@@ -33,24 +24,28 @@ export async function POST(request: Request) {
 
     const formData = await request.formData();
     const file = formData.get("file");
+    const extractedText = formData.get("extractedText") as string | null;
     const instructions = (
       formData.get("instructions") as string | null
     )?.trim();
 
-    if (!(file && file instanceof File)) {
-      return errorResponse("No PDF file received.");
+    // Validate file if provided (for size/type checking)
+    if (file && file instanceof File) {
+      if (!ALLOWED_TYPES.has(file.type)) {
+        return errorResponse("Unsupported file type. Please upload a PDF.");
+      }
+
+      if (file.size > MAX_FILE_SIZE_BYTES) {
+        return errorResponse("File is too large. Max size is 10MB.");
+      }
     }
 
-    if (!ALLOWED_TYPES.has(file.type)) {
-      return errorResponse("Unsupported file type. Please upload a PDF.");
+    // Use extracted text from client, or return error if not provided
+    if (!extractedText) {
+      return errorResponse("PDF text extraction failed. Please try again.");
     }
 
-    if (file.size > MAX_FILE_SIZE_BYTES) {
-      return errorResponse("File is too large. Max size is 10MB.");
-    }
-
-    const pdfData = await getPdfText(file);
-    const content = pdfData.trim();
+    const content = extractedText.trim();
 
     if (!content) {
       return errorResponse("Could not extract text from the PDF.");
