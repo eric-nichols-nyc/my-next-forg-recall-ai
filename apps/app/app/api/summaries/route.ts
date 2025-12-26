@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { promises as fs } from "node:fs";
 import { neonAuth } from "@neondatabase/neon-js/auth/next";
 import { getSession } from "@repo/neon-auth";
@@ -135,16 +136,38 @@ function extractTextFromJsonData(data: any): string | null {
 function extractTextFromParser(pdfParser: any): string {
   // Method 1: Try getRawTextContent()
   try {
+    // Check if the method exists and is callable
+    if (
+      typeof pdfParser.getRawTextContent !== "function"
+    ) {
+      throw new Error("getRawTextContent is not a function");
+    }
+
     const rawText = pdfParser.getRawTextContent();
+
+    // Validate the result before using it
     if (
       typeof rawText === "string" &&
       rawText.length > 0 &&
-      rawText.length <= 50_000_000
+      rawText.length <= 50_000_000 &&
+      Number.isFinite(rawText.length)
     ) {
       return rawText;
     }
+
+    // If we got here, the result is invalid, try alternatives
+    if (typeof rawText === "string" && rawText.length > 50_000_000) {
+      console.log("getRawTextContent() returned text that is too large, trying alternatives");
+    } else if (typeof rawText !== "string") {
+      console.log("getRawTextContent() returned non-string value, trying alternatives");
+    }
   } catch (error) {
-    console.log("getRawTextContent() failed, trying alternatives:", error);
+    // Handle specific error types
+    if (error instanceof RangeError && error.message.includes("Invalid count value")) {
+      console.log("getRawTextContent() encountered a RangeError (likely Infinity issue), trying alternatives");
+    } else {
+      console.log("getRawTextContent() failed, trying alternatives:", error);
+    }
   }
 
   // Method 2: Try extracting from pages structure
@@ -243,6 +266,348 @@ const truncateContent = (content: string, max = 12_000): string => {
   return content;
 };
 
+const MODEL_NAME = "gpt-4o-mini";
+
+type User = {
+  id: string;
+  email?: string;
+  [key: string]: unknown;
+};
+
+async function extractAndValidatePdfText(file: File): Promise<string> {
+  let extractedText: string;
+  try {
+    extractedText = await getPdfText(file);
+  } catch (error) {
+    console.error("Error extracting PDF text:", error);
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : "Failed to extract text from PDF. The file may be corrupted or encrypted."
+    );
+  }
+
+  const content = extractedText.trim();
+  if (content.length === 0) {
+    throw new Error("Could not extract text from the PDF.");
+  }
+  return content;
+}
+
+async function generateSummary(
+  content: string,
+  instructions: string | null | undefined
+): Promise<string> {
+  const prompt = [
+    "You are a note-taking assistant that summarizes PDF documents.",
+    "Return a concise markdown summary with headings and bullet points.",
+    instructions ? `Follow these user instructions: ${instructions}` : null,
+    "Document content:",
+    truncateContent(content),
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+
+  try {
+    const result = await generateText({
+      model,
+      prompt,
+      maxOutputTokens: 800,
+    });
+    return result.text;
+  } catch (error) {
+    console.error("Error generating summary:", error);
+    throw new Error(
+      "Failed to generate summary. The AI service may be unavailable. Please try again later."
+    );
+  }
+}
+
+async function calculateFileHash(file: File): Promise<string> {
+  try {
+    const fileBuffer = Buffer.from(await file.arrayBuffer());
+    return createHash("sha256").update(fileBuffer).digest("hex");
+  } catch (error) {
+    console.error("Error processing file:", error);
+    throw new Error("Failed to process file. Please try again.");
+  }
+}
+
+async function getAuthenticatedUser(): Promise<User> {
+  try {
+    const sessionResult = await getSession();
+    const user = sessionResult.user;
+    if (!user) {
+      throw new Error("Unauthorized");
+    }
+    return user as User;
+  } catch (error) {
+    console.error("Error getting session:", error);
+    if (error instanceof Error && error.message === "Unauthorized") {
+      throw error;
+    }
+    throw new Error("Failed to verify authentication.");
+  }
+}
+
+async function findExistingSource(sha256: string) {
+  try {
+    return await database.source.findUnique({
+      where: { sha256 },
+    });
+  } catch (error) {
+    console.error("Error checking for existing source:", error);
+    throw new Error("Database error. Please try again.");
+  }
+}
+
+function validateFile(file: unknown): asserts file is File {
+  if (!file) {
+    throw new Error("No PDF file received.");
+  }
+
+  if (!(file instanceof File)) {
+    throw new Error("No PDF file received.");
+  }
+
+  if (!ALLOWED_TYPES.has(file.type)) {
+    throw new Error("Unsupported file type. Please upload a PDF.");
+  }
+
+  if (file.size > MAX_FILE_SIZE_BYTES) {
+    throw new Error("File is too large. Max size is 10MB.");
+  }
+}
+
+function getErrorStatus(error: unknown): number {
+  if (!(error instanceof Error)) {
+    return 500;
+  }
+
+  if (error.message.includes("Unauthorized")) {
+    return 401;
+  }
+  if (error.message.includes("extract")) {
+    return 422;
+  }
+  if (error.message.includes("generate")) {
+    return 503;
+  }
+  return 500;
+}
+
+async function processPdfUpload(
+  file: File,
+  instructions: string | null | undefined
+): Promise<{
+  content: string;
+  summaryMd: string;
+  sha256: string;
+  user: User;
+  existingSource: { id: string } | null;
+}> {
+  const content = await extractAndValidatePdfText(file);
+  const summaryMd = await generateSummary(content, instructions);
+  const sha256 = await calculateFileHash(file);
+  const user = await getAuthenticatedUser();
+  const existingSource = await findExistingSource(sha256);
+
+  return { content, summaryMd, sha256, user, existingSource };
+}
+
+type SavePdfDataParams = {
+  existingSource: { id: string } | null;
+  user: User;
+  content: string;
+  summaryMd: string;
+  filename: string;
+  sha256: string;
+};
+
+async function savePdfData(
+  params: SavePdfDataParams
+): Promise<{ sourceId: string; noteId: string }> {
+  const sourceData = {
+    ownerId: params.user.id,
+    content: params.content,
+    summaryMd: params.summaryMd,
+  };
+
+  try {
+    return params.existingSource
+      ? await handleExistingSource(params.existingSource.id, sourceData)
+      : await createNewSource({
+          ...sourceData,
+          filename: params.filename,
+          sha256: params.sha256,
+        });
+  } catch (error) {
+    console.error("Error saving to database:", error);
+    throw error instanceof Error
+      ? error
+      : new Error("Failed to save PDF data. Please try again.");
+  }
+}
+
+async function saveOrUpdateSourceText(
+  sourceId: string,
+  ownerId: string,
+  content: string
+): Promise<void> {
+  try {
+    const existingText = await database.sourceText.findFirst({
+      where: { sourceId, ordinal: 0 },
+    });
+
+    if (!existingText || existingText.text !== content) {
+      if (existingText) {
+        await database.sourceText.update({
+          where: { id: existingText.id },
+          data: { text: content },
+        });
+      } else {
+        await database.sourceText.create({
+          data: {
+            ownerId,
+            sourceId,
+            ordinal: 0,
+            text: content,
+          },
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Error saving source text:", error);
+    throw new Error(
+      "Failed to save PDF text to database. Please try again."
+    );
+  }
+}
+
+async function createOrUpdateNote(
+  sourceId: string,
+  ownerId: string,
+  summaryMd: string
+): Promise<string> {
+  try {
+    const existingNote = await database.note.findUnique({
+      where: { sourceId },
+    });
+
+    if (existingNote) {
+      const updatedNote = await database.note.update({
+        where: { id: existingNote.id },
+        data: {
+          summaryMd,
+          model: MODEL_NAME,
+        },
+      });
+      return updatedNote.id;
+    }
+
+    const newNote = await database.note.create({
+      data: {
+        ownerId,
+        sourceId,
+        summaryMd,
+        model: MODEL_NAME,
+      },
+    });
+    return newNote.id;
+  } catch (error) {
+    console.error("Error creating or updating note:", error);
+    throw new Error(
+      "Failed to save summary to database. Please try again."
+    );
+  }
+}
+
+type SourceData = {
+  ownerId: string;
+  content: string;
+  summaryMd: string;
+};
+
+async function handleExistingSource(
+  sourceId: string,
+  data: SourceData
+): Promise<{ sourceId: string; noteId: string }> {
+  try {
+    await saveOrUpdateSourceText(sourceId, data.ownerId, data.content);
+    const noteId = await createOrUpdateNote(
+      sourceId,
+      data.ownerId,
+      data.summaryMd
+    );
+    return { sourceId, noteId };
+  } catch (error) {
+    console.error("Error handling existing source:", error);
+    throw error instanceof Error
+      ? error
+      : new Error("Failed to update existing PDF record.");
+  }
+}
+
+type NewSourceData = SourceData & {
+  filename: string;
+  sha256: string;
+};
+
+async function createNewSource(
+  data: NewSourceData
+): Promise<{ sourceId: string; noteId: string }> {
+  try {
+    const sourceId = crypto.randomUUID();
+
+    await database.source.create({
+      data: {
+        id: sourceId,
+        ownerId: data.ownerId,
+        type: "pdf",
+        filename: data.filename,
+        sha256: data.sha256,
+        texts: {
+          create: {
+            ownerId: data.ownerId,
+            ordinal: 0,
+            text: data.content,
+          },
+        },
+        notes: {
+          create: {
+            ownerId: data.ownerId,
+            summaryMd: data.summaryMd,
+            model: MODEL_NAME,
+          },
+        },
+      },
+    });
+
+    const createdNote = await database.note.findUnique({
+      where: { sourceId },
+    });
+    const noteId = createdNote?.id ?? crypto.randomUUID();
+
+    return { sourceId, noteId };
+  } catch (error) {
+    console.error("Error creating new source:", error);
+    // Check for Prisma-specific errors
+    if (
+      error &&
+      typeof error === "object" &&
+      "code" in error &&
+      error.code === "P2002"
+    ) {
+      throw new Error(
+        "A PDF with this content already exists. Please try uploading a different file."
+      );
+    }
+    throw new Error(
+      "Failed to save PDF to database. Please try again."
+    );
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const { session } = await neonAuth();
@@ -257,58 +622,56 @@ export async function POST(request: Request) {
       formData.get("instructions") as string | null
     )?.trim();
 
-    if (!file) {
-      return errorResponse("No PDF file received.");
+    try {
+      validateFile(file);
+    } catch (error) {
+      return errorResponse(
+        error instanceof Error ? error.message : "Invalid file.",
+        400
+      );
     }
 
-    if (!(file instanceof File)) {
-      return errorResponse("No PDF file received.");
+    let processedData: Awaited<ReturnType<typeof processPdfUpload>>;
+    try {
+      processedData = await processPdfUpload(file, instructions);
+    } catch (error) {
+      const status = getErrorStatus(error);
+      const message =
+        error instanceof Error ? error.message : "Failed to process PDF.";
+      return errorResponse(message, status);
     }
 
-    if (!ALLOWED_TYPES.has(file.type)) {
-      return errorResponse("Unsupported file type. Please upload a PDF.");
+    let dbResult: { sourceId: string; noteId: string };
+    try {
+      dbResult = await savePdfData({
+        existingSource: processedData.existingSource,
+        user: processedData.user,
+        content: processedData.content,
+        summaryMd: processedData.summaryMd,
+        filename: file.name,
+        sha256: processedData.sha256,
+      });
+    } catch (error) {
+      return errorResponse(
+        error instanceof Error ? error.message : "Failed to save PDF data.",
+        500
+      );
     }
-
-    if (file.size > MAX_FILE_SIZE_BYTES) {
-      return errorResponse("File is too large. Max size is 10MB.");
-    }
-
-    const extractedText = await getPdfText(file);
-    const content = extractedText.trim();
-
-    if (content.length === 0) {
-      return errorResponse("Could not extract text from the PDF.");
-    }
-
-    const prompt = [
-      "You are a note-taking assistant that summarizes PDF documents.",
-      "Return a concise markdown summary with headings and bullet points.",
-      instructions ? `Follow these user instructions: ${instructions}` : null,
-      "Document content:",
-      truncateContent(content),
-    ]
-      .filter(Boolean)
-      .join("\n\n");
-
-    const result = await generateText({
-      model,
-      prompt,
-      maxOutputTokens: 800,
-    });
-
-    const summaryId = crypto.randomUUID();
-    const documentId = crypto.randomUUID();
 
     return NextResponse.json({
-      summary: result.text,
-      summaryId,
-      documentId,
+      summary: processedData.summaryMd,
+      summaryId: dbResult.noteId,
+      documentId: dbResult.sourceId,
       pageCount: undefined,
     });
   } catch (error) {
-    console.error("Error creating summary", error);
+    console.error("Unexpected error creating summary:", error);
+    // Only return generic error if it's not already handled
+    if (error instanceof Error && error.message.includes("Failed to")) {
+      throw error; // Re-throw handled errors
+    }
     return errorResponse(
-      "Unable to generate summary at this time. Please try again.",
+      "An unexpected error occurred. Please try again later.",
       500
     );
   }
@@ -316,17 +679,32 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const { user } = await getSession();
-
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    let user: User;
+    try {
+      user = await getAuthenticatedUser();
+    } catch (error) {
+      return NextResponse.json(
+        {
+          error: error instanceof Error ? error.message : "Failed to verify authentication",
+        },
+        { status: 401 }
+      );
     }
 
-    const notes = await database.note.findMany({
-      where: { ownerId: user.id },
-      include: { source: true },
-      orderBy: { createdAt: "desc" },
-    });
+    let notes: NoteWithSource[];
+    try {
+      notes = await database.note.findMany({
+        where: { ownerId: user.id },
+        include: { source: true },
+        orderBy: { createdAt: "desc" },
+      });
+    } catch (error) {
+      console.error("Error fetching notes from database:", error);
+      return NextResponse.json(
+        { error: "Database error. Please try again later." },
+        { status: 500 }
+      );
+    }
 
     const summaries = notes.map((note: NoteWithSource) => ({
       id: note.id,
@@ -338,9 +716,9 @@ export async function GET() {
 
     return NextResponse.json({ summaries });
   } catch (error) {
-    console.error("Error fetching summaries", error);
+    console.error("Unexpected error fetching summaries:", error);
     return NextResponse.json(
-      { error: "Failed to fetch summaries" },
+      { error: "An unexpected error occurred. Please try again later." },
       { status: 500 }
     );
   }
