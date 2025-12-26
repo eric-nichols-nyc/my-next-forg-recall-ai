@@ -1150,6 +1150,7 @@ export const NoteScalarFieldEnum = {
   id: 'id',
   ownerId: 'ownerId',
   sourceId: 'sourceId',
+  title: 'title',
   model: 'model',
   summaryMd: 'summaryMd',
   createdAt: 'createdAt'

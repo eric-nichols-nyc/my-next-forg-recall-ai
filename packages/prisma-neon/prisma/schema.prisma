@@ -99,6 +99,7 @@ model Note {
   sourceId  String   @unique @db.Uuid
   source    Source   @relation(fields: [sourceId], references: [id], onDelete: Cascade)
 
+  title     String?  @db.Text
   model     String?  @db.Text
   summaryMd String   @db.Text
 

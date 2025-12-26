@@ -20,6 +20,7 @@ const errorResponse = (message: string, status = 400) =>
 type NoteWithSource = {
   id: string;
   sourceId: string;
+  title: string | null;
   summaryMd: string;
   createdAt: Date;
   source: { title: string | null } | null;
@@ -137,9 +138,7 @@ function extractTextFromParser(pdfParser: any): string {
   // Method 1: Try getRawTextContent()
   try {
     // Check if the method exists and is callable
-    if (
-      typeof pdfParser.getRawTextContent !== "function"
-    ) {
+    if (typeof pdfParser.getRawTextContent !== "function") {
       throw new Error("getRawTextContent is not a function");
     }
 
@@ -157,14 +156,23 @@ function extractTextFromParser(pdfParser: any): string {
 
     // If we got here, the result is invalid, try alternatives
     if (typeof rawText === "string" && rawText.length > 50_000_000) {
-      console.log("getRawTextContent() returned text that is too large, trying alternatives");
+      console.log(
+        "getRawTextContent() returned text that is too large, trying alternatives"
+      );
     } else if (typeof rawText !== "string") {
-      console.log("getRawTextContent() returned non-string value, trying alternatives");
+      console.log(
+        "getRawTextContent() returned non-string value, trying alternatives"
+      );
     }
   } catch (error) {
     // Handle specific error types
-    if (error instanceof RangeError && error.message.includes("Invalid count value")) {
-      console.log("getRawTextContent() encountered a RangeError (likely Infinity issue), trying alternatives");
+    if (
+      error instanceof RangeError &&
+      error.message.includes("Invalid count value")
+    ) {
+      console.log(
+        "getRawTextContent() encountered a RangeError (likely Infinity issue), trying alternatives"
+      );
     } else {
       console.log("getRawTextContent() failed, trying alternatives:", error);
     }
@@ -264,6 +272,39 @@ const truncateContent = (content: string, max = 12_000): string => {
     return `${content.slice(0, max)}\n\n...[truncated]`;
   }
   return content;
+};
+
+// Regex patterns for title extraction (defined at top level for performance)
+const HEADING_PATTERN = /^#+\s+(.+)$/m;
+const MARKDOWN_FORMAT_PATTERN = /^[#*-]\s*/;
+
+// Helper to extract title from markdown summary
+// Tries to find the first heading, otherwise uses first line or a default
+const extractTitleFromSummary = (summaryMd: string): string => {
+  // Try to find the first markdown heading (# Title or ## Title)
+  const headingMatch = summaryMd.match(HEADING_PATTERN);
+  if (headingMatch?.[1]) {
+    return headingMatch[1].trim();
+  }
+
+  // Try to find the first non-empty line
+  const firstLine = summaryMd
+    .split("\n")
+    .find((line) => line.trim().length > 0);
+  if (firstLine) {
+    // Remove markdown formatting and limit length
+    const cleaned = firstLine.replace(MARKDOWN_FORMAT_PATTERN, "").trim();
+    if (cleaned.length > 0 && cleaned.length <= 100) {
+      return cleaned;
+    }
+    // If too long, truncate
+    if (cleaned.length > 100) {
+      return `${cleaned.slice(0, 97)}...`;
+    }
+  }
+
+  // Default fallback
+  return "Untitled Note";
 };
 
 const MODEL_NAME = "gpt-4o-mini";
@@ -422,6 +463,7 @@ type SavePdfDataParams = {
   summaryMd: string;
   filename: string;
   sha256: string;
+  title?: string | null;
 };
 
 async function savePdfData(
@@ -431,6 +473,7 @@ async function savePdfData(
     ownerId: params.user.id,
     content: params.content,
     summaryMd: params.summaryMd,
+    title: params.title,
   };
 
   try {
@@ -478,18 +521,18 @@ async function saveOrUpdateSourceText(
     }
   } catch (error) {
     console.error("Error saving source text:", error);
-    throw new Error(
-      "Failed to save PDF text to database. Please try again."
-    );
+    throw new Error("Failed to save PDF text to database. Please try again.");
   }
 }
 
 async function createOrUpdateNote(
   sourceId: string,
   ownerId: string,
-  summaryMd: string
+  summaryMd: string,
+  title?: string | null
 ): Promise<string> {
   try {
+    const noteTitle = title ?? extractTitleFromSummary(summaryMd);
     const existingNote = await database.note.findUnique({
       where: { sourceId },
     });
@@ -499,6 +542,7 @@ async function createOrUpdateNote(
         where: { id: existingNote.id },
         data: {
           summaryMd,
+          title: noteTitle,
           model: MODEL_NAME,
         },
       });
@@ -510,15 +554,14 @@ async function createOrUpdateNote(
         ownerId,
         sourceId,
         summaryMd,
+        title: noteTitle,
         model: MODEL_NAME,
       },
     });
     return newNote.id;
   } catch (error) {
     console.error("Error creating or updating note:", error);
-    throw new Error(
-      "Failed to save summary to database. Please try again."
-    );
+    throw new Error("Failed to save summary to database. Please try again.");
   }
 }
 
@@ -526,6 +569,7 @@ type SourceData = {
   ownerId: string;
   content: string;
   summaryMd: string;
+  title?: string | null;
 };
 
 async function handleExistingSource(
@@ -537,7 +581,8 @@ async function handleExistingSource(
     const noteId = await createOrUpdateNote(
       sourceId,
       data.ownerId,
-      data.summaryMd
+      data.summaryMd,
+      data.title
     );
     return { sourceId, noteId };
   } catch (error) {
@@ -577,6 +622,7 @@ async function createNewSource(
           create: {
             ownerId: data.ownerId,
             summaryMd: data.summaryMd,
+            title: data.title ?? extractTitleFromSummary(data.summaryMd),
             model: MODEL_NAME,
           },
         },
@@ -602,9 +648,7 @@ async function createNewSource(
         "A PDF with this content already exists. Please try uploading a different file."
       );
     }
-    throw new Error(
-      "Failed to save PDF to database. Please try again."
-    );
+    throw new Error("Failed to save PDF to database. Please try again.");
   }
 }
 
@@ -621,6 +665,7 @@ export async function POST(request: Request) {
     const instructions = (
       formData.get("instructions") as string | null
     )?.trim();
+    const title = (formData.get("title") as string | null)?.trim() || null;
 
     try {
       validateFile(file);
@@ -650,6 +695,7 @@ export async function POST(request: Request) {
         summaryMd: processedData.summaryMd,
         filename: file.name,
         sha256: processedData.sha256,
+        title,
       });
     } catch (error) {
       return errorResponse(
@@ -685,7 +731,10 @@ export async function GET() {
     } catch (error) {
       return NextResponse.json(
         {
-          error: error instanceof Error ? error.message : "Failed to verify authentication",
+          error:
+            error instanceof Error
+              ? error.message
+              : "Failed to verify authentication",
         },
         { status: 401 }
       );
@@ -693,11 +742,22 @@ export async function GET() {
 
     let notes: NoteWithSource[];
     try {
-      notes = await database.note.findMany({
+      notes = (await database.note.findMany({
         where: { ownerId: user.id },
-        include: { source: true },
+        select: {
+          id: true,
+          sourceId: true,
+          title: true,
+          summaryMd: true,
+          createdAt: true,
+          source: {
+            select: {
+              title: true,
+            },
+          },
+        },
         orderBy: { createdAt: "desc" },
-      });
+      })) as NoteWithSource[];
     } catch (error) {
       console.error("Error fetching notes from database:", error);
       return NextResponse.json(
@@ -709,7 +769,7 @@ export async function GET() {
     const summaries = notes.map((note: NoteWithSource) => ({
       id: note.id,
       sourceId: note.sourceId,
-      title: note.source?.title ?? "Untitled source",
+      title: note.title ?? note.source?.title ?? "Untitled Note",
       createdAt: note.createdAt,
       summary: note.summaryMd,
     }));

@@ -34,7 +34,7 @@ async function fetchNote(
     return {
       id: note.id,
       sourceId: note.sourceId,
-      title: note.source?.title ?? "Untitled source",
+      title: note.title ?? note.source?.title ?? "Untitled Note",
       summaryMd: note.summaryMd,
       createdAt: note.createdAt,
     };
