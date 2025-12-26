@@ -45,7 +45,7 @@ export const Chat = () => {
   };
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col bg-neutral-900">
       <Conversation className="flex-1 overflow-auto">
         <ConversationContent>
           {messages.length === 0 ? (
