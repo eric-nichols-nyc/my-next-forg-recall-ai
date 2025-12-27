@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@repo/design-system/components/ui/dialog";
 import { Button } from "@repo/design-system/components/ui/button";
-import { FileText, Type, ArrowLeft } from "lucide-react";
+import { FileText, Type, ArrowLeft, Youtube, Globe } from "lucide-react";
 import { PdfSummaryUploader } from "@/components/pdf-summary-uploader";
 import { TextInputForm } from "./text-input-form";
 
@@ -56,7 +56,7 @@ export function NoteGenerationModal({ children }: NoteGenerationModalProps) {
         </DialogHeader>
 
         {mode === "select" && (
-          <div className="flex flex-col gap-4 py-4">
+          <div className="grid grid-cols-2 gap-4 py-4">
             <Button
               variant="outline"
               className="h-auto flex-col gap-3 py-6"
@@ -72,6 +72,22 @@ export function NoteGenerationModal({ children }: NoteGenerationModalProps) {
             >
               <Type className="size-6" />
               <span className="text-base">Generate from Text</span>
+            </Button>
+            <Button
+              variant="outline"
+              className="h-auto flex-col gap-3 py-6"
+              disabled
+            >
+              <Youtube className="size-6" />
+              <span className="text-base">YouTube to Note</span>
+            </Button>
+            <Button
+              variant="outline"
+              className="h-auto flex-col gap-3 py-6"
+              disabled
+            >
+              <Globe className="size-6" />
+              <span className="text-base">Webpage to Note</span>
             </Button>
           </div>
         )}
