@@ -76,7 +76,7 @@ export default async function NotesIdPage({
         left={<NotesContent note={note} session={session} user={user} />}
         right={
           <div className="flex h-full flex-col overflow-y-auto border-l bg-muted/50 p-6">
-            <Chat />
+            <Chat noteContext={note.summaryMd} />
           </div>
         }
       />
