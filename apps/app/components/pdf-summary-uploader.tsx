@@ -65,7 +65,11 @@ const toFile = async (part: FileUIPart) => {
   });
 };
 
-export function PdfSummaryUploader() {
+type PdfSummaryUploaderProps = {
+  onSuccess?: (noteId: string) => void;
+};
+
+export function PdfSummaryUploader({ onSuccess }: PdfSummaryUploaderProps) {
   const [summary, setSummary] = useState<string | null>(null);
   const [metadata, setMetadata] = useState<SummaryResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -152,6 +156,11 @@ export function PdfSummaryUploader() {
         summary: payload.summary,
       });
       setInstructions("");
+
+      // Call onSuccess callback if provided (use documentId which is the sourceId for navigation)
+      if (onSuccess && payload.documentId) {
+        onSuccess(payload.documentId);
+      }
     } catch (cause) {
       console.error("Summary upload failed", cause);
       setError((prev) =>
