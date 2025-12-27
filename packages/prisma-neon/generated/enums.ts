@@ -12,7 +12,8 @@
 export const SourceType = {
   pdf: 'pdf',
   web: 'web',
-  youtube: 'youtube'
+  youtube: 'youtube',
+  text: 'text'
 } as const
 
 export type SourceType = (typeof SourceType)[keyof typeof SourceType]
