@@ -13,8 +13,9 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { FileText, Type, ArrowLeft, Youtube, Globe } from "lucide-react";
 import { PdfSummaryUploader } from "@/components/pdf-summary-uploader";
 import { TextInputForm } from "./text-input-form";
+import { WebpageInputForm } from "./webpage-input-form";
 
-type ModalMode = "select" | "file" | "text";
+type ModalMode = "select" | "file" | "text" | "web";
 
 type NoteGenerationModalProps = {
   children: React.ReactNode;
@@ -52,6 +53,7 @@ export function NoteGenerationModal({ children }: NoteGenerationModalProps) {
             {mode === "select" && "Create New Note"}
             {mode === "file" && "Upload PDF"}
             {mode === "text" && "Generate from Text"}
+            {mode === "web" && "Webpage to Note"}
           </DialogTitle>
         </DialogHeader>
 
@@ -84,7 +86,7 @@ export function NoteGenerationModal({ children }: NoteGenerationModalProps) {
             <Button
               variant="outline"
               className="h-auto flex-col gap-3 py-6"
-              disabled
+              onClick={() => setMode("web")}
             >
               <Globe className="size-6" />
               <span className="text-base">Webpage to Note</span>
@@ -119,6 +121,21 @@ export function NoteGenerationModal({ children }: NoteGenerationModalProps) {
               Back
             </Button>
             <TextInputForm onSuccess={handleSuccess} />
+          </div>
+        )}
+
+        {mode === "web" && (
+          <div className="space-y-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleBack}
+              className="mb-2"
+            >
+              <ArrowLeft className="size-4" />
+              Back
+            </Button>
+            <WebpageInputForm onSuccess={handleSuccess} />
           </div>
         )}
       </DialogContent>
