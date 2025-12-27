@@ -57,6 +57,9 @@ importers:
       '@ai-sdk/react':
         specifier: ^2.0.93
         version: 2.0.118(react@19.2.1)(zod@4.2.1)
+      '@mendable/firecrawl-js':
+        specifier: ^4.10.0
+        version: 4.10.0
       '@neondatabase/neon-auth-next':
         specifier: 0.1.0-alpha.24
         version: 0.1.0-alpha.24(next@16.0.10(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
@@ -3029,6 +3032,10 @@ packages:
     peerDependencies:
       react: ^17.0.2 || ^18.0.0 || ^19.0
       react-dom: ^17.0.2 || ^18.0.0 || ^19.0
+
+  '@mendable/firecrawl-js@4.10.0':
+    resolution: {integrity: sha512-40qtKCVY3a1A4Y6t/m5Ar10HbzrWuyCNt7vR3uBh+j14GZC0JoxEkjaFRC00wBmPD9N5JMT4gmTXvzM/SI9enw==}
+    engines: {node: '>=22.0.0'}
 
   '@mermaid-js/parser@0.6.3':
     resolution: {integrity: sha512-lnjOhe7zyHjc+If7yT4zoedx2vo4sHaTmtkl1+or8BRTnCtDmcTpAjpzDSfCZrshM5bCoz0GyidzadJAH1xobA==}
@@ -9845,7 +9852,6 @@ packages:
     resolution: {integrity: sha512-WkezNsLK8sGpuFC7+PPP0DsXROwdoOxmXPBTtUWWkCwCi/Vi97MRC52Ly6FWIJjOKIywpm/L2oaUgSrmtU+7ZQ==}
     engines: {node: '>=20.18.0'}
     hasBin: true
-    bundledDependencies: []
 
   pdfjs-dist@5.4.296:
     resolution: {integrity: sha512-DlOzet0HO7OEnmUmB6wWGJrrdvbyJKftI1bhMitK7O2N8W2gc757yyYBbINy9IDafXAV9wmKr9t7xsTaNKRG5Q==}
@@ -11493,6 +11499,9 @@ packages:
 
   typeid-js@1.2.0:
     resolution: {integrity: sha512-t76ZucAnvGC60ea/HjVsB0TSoB0cw9yjnfurUgtInXQWUI/VcrlZGpO23KN3iSe8yOGUgb1zr7W7uEzJ3hSljA==}
+
+  typescript-event-target@1.1.2:
+    resolution: {integrity: sha512-TvkrTUpv7gCPlcnSoEwUVUBwsdheKm+HF5u2tPAKubkIGMfovdSizCTaZRY/NhR8+Ijy8iZZUapbVQAsNrkFrw==}
 
   typescript-memoize@1.1.1:
     resolution: {integrity: sha512-GQ90TcKpIH4XxYTI2F98yEQYZgjNMOGPpOgdjIBhaLaWji5HPWlRnZ4AeA1hfBxtY7bCGDJsqDDHk/KaHOl5bA==}
@@ -14109,6 +14118,15 @@ snapshots:
     dependencies:
       react: 19.2.1
       react-dom: 19.2.1(react@19.2.1)
+
+  '@mendable/firecrawl-js@4.10.0':
+    dependencies:
+      axios: 1.12.2
+      typescript-event-target: 1.1.2
+      zod: 3.25.76
+      zod-to-json-schema: 3.24.5(zod@3.25.76)
+    transitivePeerDependencies:
+      - debug
 
   '@mermaid-js/parser@0.6.3':
     dependencies:
@@ -24223,6 +24241,8 @@ snapshots:
   typeid-js@1.2.0:
     dependencies:
       uuid: 10.0.0
+
+  typescript-event-target@1.1.2: {}
 
   typescript-memoize@1.1.1: {}
 
