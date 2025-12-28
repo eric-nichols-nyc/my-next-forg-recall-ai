@@ -213,6 +213,11 @@ model Chunk {
   startChar  Int?
   endChar    Int?
 
+  // Vector store columns (added via migration)
+  // Note: embedding column (vector type) is not supported by Prisma natively
+  // It exists in the database but cannot be queried through Prisma
+  metadata   Json?    @db.JsonB
+
   createdAt DateTime @default(now()) @db.Timestamptz(6)
 
   @@unique([sourceId, chunkIndex])

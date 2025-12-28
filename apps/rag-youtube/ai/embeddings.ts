@@ -7,7 +7,7 @@ const path = require("node:path");
 // Load .env from the current working directory (apps/rag-youtube/.env)
 dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 
-import { FakeVectorStore } from "@langchain/core/utils/testing";
+import { PGVectorStore } from "@langchain/community/vectorstores/pgvector";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { keys } from "../lib/keys";
 
@@ -34,11 +34,79 @@ function createEmbeddings() {
 export const embeddings = createEmbeddings();
 
 /**
- * Memory Vector Store
- * In-memory vector store for storing and retrieving embedded document chunks
+ * PGVector Store (lazy initialization)
+ * Persistent vector store using Neon PostgreSQL database with pgvector extension
  *
- * Note: This is a singleton instance. To create a new vector store for different data,
- * use: new FakeVectorStore(embeddings)
+ * This vector store persists embeddings in your Neon database, allowing them to
+ * survive application restarts and be shared across instances.
+ *
+ * Make sure to enable the pgvector extension in your Neon database:
+ * 1. Go to Neon Console → Your Database → Extensions
+ * 2. Enable the "vector" extension
+ * OR run: CREATE EXTENSION IF NOT EXISTS vector;
+ *
+ * Note: This uses lazy initialization - the vector store is created on first use.
+ * All methods should be awaited since they may trigger initialization.
  */
-export const vectorStore = new FakeVectorStore(embeddings);
+let vectorStorePromise: Promise<PGVectorStore> | null = null;
 
+function getVectorStore(): Promise<PGVectorStore> {
+  if (!vectorStorePromise) {
+    const databaseUrl = keys().DATABASE_URL || process.env.DATABASE_URL;
+
+    if (!databaseUrl) {
+      throw new Error(
+        "DATABASE_URL environment variable is required for PGVector. " +
+          "Please set it in your .env file or environment variables."
+      );
+    }
+
+    vectorStorePromise = PGVectorStore.initialize(embeddings, {
+      postgresConnectionOptions: {
+        connectionString: databaseUrl,
+      },
+      tableName: "Chunk", // Using existing Chunk table
+      // Note: The Chunk table must have the following columns for PGVector:
+      // - id (uuid, primary key) - already exists
+      // - content (text) - already exists
+      // - metadata (jsonb) - needs to be added
+      // - embedding (vector) - needs to be added
+    });
+  }
+
+  return vectorStorePromise;
+}
+
+/**
+ * Vector Store wrapper that handles async initialization
+ * Provides a synchronous interface by wrapping async operations
+ */
+export const vectorStore = {
+  async addDocuments(documents: Parameters<PGVectorStore["addDocuments"]>[0]) {
+    const store = await getVectorStore();
+    return store.addDocuments(documents);
+  },
+
+  async similaritySearchWithScore(
+    query: string,
+    k: number,
+    filter?: Parameters<PGVectorStore["similaritySearchWithScore"]>[2]
+  ) {
+    const store = await getVectorStore();
+    return store.similaritySearchWithScore(query, k, filter);
+  },
+
+  async similaritySearch(
+    query: string,
+    k: number,
+    filter?: Parameters<PGVectorStore["similaritySearch"]>[2]
+  ) {
+    const store = await getVectorStore();
+    return store.similaritySearch(query, k, filter);
+  },
+
+  // Expose the underlying store for advanced usage
+  getStore(): Promise<PGVectorStore> {
+    return getVectorStore();
+  },
+};

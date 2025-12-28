@@ -1230,6 +1230,7 @@ export const ChunkScalarFieldEnum = {
   pageNumber: 'pageNumber',
   startChar: 'startChar',
   endChar: 'endChar',
+  metadata: 'metadata',
   createdAt: 'createdAt'
 } as const
 
