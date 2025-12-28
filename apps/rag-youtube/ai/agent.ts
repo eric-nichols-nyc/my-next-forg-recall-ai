@@ -10,14 +10,8 @@ dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 
 import { ChatAnthropic } from "@langchain/anthropic";
 import { Document } from "@langchain/core/documents";
-import {
-  AIMessage,
-  type BaseMessage,
-  HumanMessage,
-  ToolMessage,
-} from "@langchain/core/messages";
+import { AIMessage, HumanMessage, ToolMessage } from "@langchain/core/messages";
 import { DynamicStructuredTool } from "@langchain/core/tools";
-import { END, MemorySaver, MessageGraph, START } from "@langchain/langgraph";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { z } from "zod";
 import { keys } from "../lib/keys";
@@ -156,7 +150,7 @@ function createModel() {
   }
 
   const model = new ChatAnthropic({
-    model: "claude-3-5-sonnet-20241022",
+    model: "claude-3-7-sonnet-latest",
     temperature: 0.7,
     apiKey,
   });
@@ -165,150 +159,6 @@ function createModel() {
   return model.bindTools([searchVectorStoreTool]);
 }
 
-/**
- * Node: Call the LLM
- * This node processes the current state and generates a response
- * MessageGraph expects nodes to return a message directly
- */
-function callModel(state: { messages: BaseMessage[] }) {
-  const model = createModel();
-  const { messages } = state;
-
-  // MessageGraph handles message aggregation, so return the message directly
-  return model.invoke(messages);
-}
-
-/**
- * Node: Execute Tools
- * Executes tool calls from the AI message and returns tool results
- */
-async function executeTools(state: { messages: BaseMessage[] }) {
-  const { messages } = state;
-  const lastMessage = messages.at(-1);
-
-  if (!(lastMessage instanceof AIMessage)) {
-    throw new Error("Last message is not an AI message");
-  }
-
-  if (!lastMessage.tool_calls) {
-    throw new Error("No tool calls found in the last message");
-  }
-
-  // Execute all tool calls
-  const toolResults = await Promise.all(
-    lastMessage.tool_calls.map(async (toolCall) => {
-      // Only handle our search_video_transcript tool
-      if (toolCall.name !== "search_video_transcript") {
-        return new ToolMessage({
-          content: `Unknown tool: ${toolCall.name}`,
-          tool_call_id: toolCall.id ?? "",
-        });
-      }
-
-      const args = toolCall.args as { query: string; k?: number };
-      const result = await searchVectorStoreTool.invoke(args);
-
-      return new ToolMessage({
-        content: result,
-        tool_call_id: toolCall.id ?? "",
-      });
-    })
-  );
-
-  return toolResults;
-}
-
-/**
- * Node: Should continue?
- * Determines if the agent should continue processing or end
- * MessageGraph passes messages array directly to conditional functions
- */
-function shouldContinue(messages: BaseMessage[]): string {
-  const lastMessage = messages.at(-1);
-
-  // If the last message is from the AI and has tool calls, execute tools
-  if (lastMessage instanceof AIMessage) {
-    if (lastMessage.tool_calls && lastMessage.tool_calls.length > 0) {
-      return "tools";
-    }
-    return "end";
-  }
-
-  // If the last message is a tool result, continue to agent
-  if (lastMessage instanceof ToolMessage) {
-    return "continue";
-  }
-
-  return "continue";
-}
-
-/**
- * Memory/Checkpoint saver for conversation history
- * Uses LangGraph's built-in MemorySaver for in-memory conversation persistence
- */
-export const memory = new MemorySaver();
-
-/**
- * Create the LangGraph workflow with tool support and memory
- */
-function createAgentGraph() {
-  // Use MessageGraph which is designed for message-based workflows
-  const workflow = new MessageGraph();
-
-  // Add nodes
-  workflow.addNode("agent", callModel);
-  workflow.addNode("tools", executeTools);
-
-  // Set entry point - connect START to agent node
-  workflow.addEdge(START, "agent" as never);
-
-  // Add conditional edge from agent - can go to tools, continue, or end
-  workflow.addConditionalEdges("agent" as never, shouldContinue, {
-    tools: "tools" as never,
-    continue: "agent" as never,
-    end: END,
-  });
-
-  // After tools execute, always go back to agent
-  workflow.addEdge("tools" as never, "agent" as never);
-
-  // Compile the graph with memory checkpointer
-  return workflow.compile({ checkpointer: memory });
-}
-
-/**
- * Create and export the agent instance
- * Using explicit type to avoid TypeScript inference issues with internal LangChain types
- */
-// biome-ignore lint/suspicious/noExplicitAny: LangGraph compiled graph type is complex and not easily expressible
-export const agent: any = createAgentGraph();
-
-/**
- * Run the agent with a user message
- * Uses LangGraph's MemorySaver for conversation history
- *
- * @param message - The user's message
- * @param threadId - Optional thread ID for conversation continuity (default: "default")
- * @returns The agent's response
- */
-export function runAgent(
-  message: string,
-  threadId = "default"
-): Promise<unknown> {
-  const config = { configurable: { thread_id: threadId } };
-
-  return agent.invoke({ messages: [new HumanMessage(message)] }, config);
-}
-
-/**
- * Ask a question about the video transcript
- * This is a convenience function that uses the RAG agent to answer questions
- * Uses LangGraph's MemorySaver for conversation history
- *
- * @param question - The question to ask about the video
- * @param threadId - Optional thread ID for conversation continuity (default: "default")
- * @returns The agent's answer based on relevant chunks from the transcript
- */
 /**
  * Extract text content from an AIMessage
  */
@@ -329,10 +179,14 @@ function extractMessageContent(message: AIMessage): string | null {
   return null;
 }
 
-export async function askAboutVideo(
-  question: string,
-  threadId = "default"
-): Promise<string> {
+/**
+ * Ask a question about the video transcript
+ * Simple tool-calling loop without LangGraph
+ *
+ * @param question - The question to ask about the video
+ * @returns The agent's answer based on relevant chunks from the transcript
+ */
+export async function askAboutVideo(question: string): Promise<string> {
   const systemPrompt = `You are a helpful, conversational assistant that answers questions about video transcripts.
 
 When a user asks a question:
@@ -342,60 +196,60 @@ When a user asks a question:
 4. Don't just repeat the tool results verbatim - synthesize the information into a coherent answer
 5. If the tool doesn't find relevant information, let the user know politely`;
 
-  const config = { configurable: { thread_id: threadId } };
+  const model = createModel();
+  const messages: (HumanMessage | AIMessage | ToolMessage)[] = [
+    new HumanMessage(`${systemPrompt}\n\nUser's question: ${question}`),
+  ];
 
-  // Check if this is the first message in the thread
-  const checkpoint = await memory.get(config);
-  const hasMessages = checkpoint?.channel_values?.messages;
+  // Simple tool-calling loop
+  const maxIterations = 10;
+  for (let i = 0; i < maxIterations; i++) {
+    // Call the model
+    const response = await model.invoke(messages);
+    messages.push(response);
 
-  const messages = hasMessages
-    ? [new HumanMessage(question)]
-    : [new HumanMessage(`${systemPrompt}\n\nUser's question: ${question}`)];
-
-  const result = await agent.invoke({ messages }, config);
-
-  // Extract the final AI message - find the last AIMessage with actual content
-  // The result from MessageGraph should have a messages array
-  const resultMessages =
-    result.messages || (Array.isArray(result) ? result : []);
-
-  // Find the last AIMessage that has content AND no tool calls (the final response)
-  // Skip any AIMessages that only have tool calls (those are intermediate steps)
-  for (let i = resultMessages.length - 1; i >= 0; i--) {
-    const msg = resultMessages[i];
-    // Only return messages that have content and no pending tool calls
-    // This ensures we get the final synthesized response, not an intermediate tool-calling message
-    if (
-      msg instanceof AIMessage &&
-      (!msg.tool_calls || msg.tool_calls.length === 0)
-    ) {
-      const content = extractMessageContent(msg);
-      if (content && content.trim().length > 0) {
+    // If no tool calls, we're done - return the response
+    if (!response.tool_calls?.length) {
+      const content = extractMessageContent(response);
+      if (content?.trim()) {
         return content;
       }
     }
+
+    // Execute tool calls
+    const toolResults = await Promise.all(
+      (response.tool_calls ?? []).map(async (toolCall) => {
+        if (toolCall.name !== "search_video_transcript") {
+          return new ToolMessage({
+            content: `Unknown tool: ${toolCall.name}`,
+            tool_call_id: toolCall.id ?? "",
+          });
+        }
+
+        const args = toolCall.args as { query: string; k?: number };
+        const result = await searchVectorStoreTool.invoke(args);
+
+        return new ToolMessage({
+          content: result,
+          tool_call_id: toolCall.id ?? "",
+        });
+      })
+    );
+
+    // Add tool results to messages and continue loop
+    messages.push(...toolResults);
   }
 
-  // Fallback: if no final response found, return error
-  return "I couldn't generate a response. The agent may not have completed processing. Please try again.";
-}
-
-/**
- * Stream the agent's response
- *
- * @param message - The user's message
- * @returns An async generator of agent responses
- */
-export async function* streamAgent(message: string) {
-  const initialState = {
-    messages: [new HumanMessage(message)],
-  };
-
-  const stream = await agent.stream(initialState);
-
-  for await (const chunk of stream) {
-    yield chunk;
+  // Fallback if we hit max iterations
+  const lastMessage = messages.at(-1);
+  if (lastMessage instanceof AIMessage) {
+    const content = extractMessageContent(lastMessage);
+    if (content) {
+      return content;
+    }
   }
+
+  return "I couldn't generate a response. Please try again.";
 }
 
 /**
@@ -537,6 +391,15 @@ if (isMainModule) {
           console.log("📋 Tool Result:\n", toolResult);
         } catch (toolError) {
           console.error("❌ Tool Error:", toolError);
+        }
+
+        // Test askAboutVideo function
+        console.log("\n🤖 Testing askAboutVideo function...\n");
+        try {
+          const answer = await askAboutVideo("Why is Next.js slow?");
+          console.log("\n💬 Agent Response:\n", answer);
+        } catch (error) {
+          console.error("❌ askAboutVideo Error:", error);
         }
       } else {
         console.log("⚠️  No result from processVideo1Transcript");
