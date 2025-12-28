@@ -10,8 +10,10 @@ dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 
 import { ChatAnthropic } from "@langchain/anthropic";
 import { Document } from "@langchain/core/documents";
-import { AIMessage, HumanMessage, ToolMessage } from "@langchain/core/messages";
+import { type BaseMessage, HumanMessage } from "@langchain/core/messages";
 import { DynamicStructuredTool } from "@langchain/core/tools";
+import { MemorySaver } from "@langchain/langgraph";
+import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { z } from "zod";
 import { keys } from "../lib/keys";
@@ -138,9 +140,9 @@ const searchVectorStoreTool = new DynamicStructuredTool({
 });
 
 /**
- * Initialize the ChatAnthropic model with tools
+ * Create the ChatAnthropic model
  */
-function createModel() {
+function createModel(): ChatAnthropic {
   const apiKey = keys().ANTHROPIC_API_KEY;
 
   if (!apiKey) {
@@ -149,44 +151,24 @@ function createModel() {
     );
   }
 
-  const model = new ChatAnthropic({
+  return new ChatAnthropic({
     model: "claude-haiku-4-5-20251001",
     temperature: 0.7,
     apiKey,
   });
-
-  // Bind the tool to the model
-  return model.bindTools([searchVectorStoreTool]);
 }
 
 /**
- * Extract text content from an AIMessage
+ * LangGraph MemorySaver for checkpoint storage
+ * This provides persistent memory across agent invocations using thread_id
  */
-function extractMessageContent(message: AIMessage): string | null {
-  const content = message.content;
-  if (typeof content === "string" && content.trim()) {
-    return content;
-  }
-  if (Array.isArray(content)) {
-    const textContent = content
-      .filter((block) => block.type === "text")
-      .map((block) => (block as { text: string }).text)
-      .join("\n");
-    if (textContent.trim()) {
-      return textContent;
-    }
-  }
-  return null;
-}
+const checkpointer = new MemorySaver();
 
 /**
- * Ask a question about the video transcript
- * Simple tool-calling loop without LangGraph
- *
- * @param question - The question to ask about the video
- * @returns The agent's answer based on relevant chunks from the transcript
+ * Create the LangGraph React Agent with memory support
  */
-export async function askAboutVideo(question: string): Promise<string> {
+function createAgent() {
+  const model = createModel();
   const systemPrompt = `You are a helpful, conversational assistant that answers questions about video transcripts.
 
 When a user asks a question:
@@ -194,62 +176,109 @@ When a user asks a question:
 2. After receiving the tool results, provide a natural, conversational answer based on what you found
 3. Write as if you're having a friendly conversation - be clear, helpful, and engaging
 4. Don't just repeat the tool results verbatim - synthesize the information into a coherent answer
-5. If the tool doesn't find relevant information, let the user know politely`;
+5. If the tool doesn't find relevant information, let the user know politely
+6. You can reference previous parts of the conversation to provide context-aware answers`;
 
-  const model = createModel();
-  const messages: (HumanMessage | AIMessage | ToolMessage)[] = [
-    new HumanMessage(`${systemPrompt}\n\nUser's question: ${question}`),
-  ];
+  return createReactAgent({
+    llm: model,
+    tools: [searchVectorStoreTool],
+    stateModifier: systemPrompt,
+    checkpointSaver: checkpointer,
+  });
+}
 
-  // Simple tool-calling loop
-  const maxIterations = 10;
-  for (let i = 0; i < maxIterations; i++) {
-    // Call the model
-    const response = await model.invoke(messages);
-    messages.push(response);
+/**
+ * Get the agent instance (singleton pattern)
+ */
+let agentInstance: ReturnType<typeof createAgent> | null = null;
+function getAgent() {
+  if (!agentInstance) {
+    agentInstance = createAgent();
+  }
+  return agentInstance;
+}
 
-    // If no tool calls, we're done - return the response
-    if (!response.tool_calls?.length) {
-      const content = extractMessageContent(response);
-      if (content?.trim()) {
-        return content;
-      }
-    }
-
-    // Execute tool calls
-    const toolResults = await Promise.all(
-      (response.tool_calls ?? []).map(async (toolCall) => {
-        if (toolCall.name !== "search_video_transcript") {
-          return new ToolMessage({
-            content: `Unknown tool: ${toolCall.name}`,
-            tool_call_id: toolCall.id ?? "",
-          });
-        }
-
-        const args = toolCall.args as { query: string; k?: number };
-        const result = await searchVectorStoreTool.invoke(args);
-
-        return new ToolMessage({
-          content: result,
-          tool_call_id: toolCall.id ?? "",
-        });
-      })
-    );
-
-    // Add tool results to messages and continue loop
-    messages.push(...toolResults);
+/**
+ * Extract text content from the last message in the response
+ */
+function extractResponseText(response: { messages: BaseMessage[] }): string {
+  const lastMessage = response.messages.at(-1);
+  if (!lastMessage) {
+    return "I couldn't generate a response. Please try again.";
   }
 
-  // Fallback if we hit max iterations
-  const lastMessage = messages.at(-1);
-  if (lastMessage instanceof AIMessage) {
-    const content = extractMessageContent(lastMessage);
-    if (content) {
-      return content;
+  // BaseMessage has a content property - extract it
+  const msg = lastMessage as { content?: unknown };
+  const content = msg.content;
+
+  if (typeof content === "string" && content.trim()) {
+    return content;
+  }
+
+  // If content is an array (like in structured content), extract text
+  if (Array.isArray(content)) {
+    const textContent = content
+      .filter((block: { type?: string }) => block.type === "text")
+      .map((block: { text?: string }) => block.text)
+      .filter(Boolean)
+      .join("\n");
+    if (textContent.trim()) {
+      return textContent;
     }
   }
 
   return "I couldn't generate a response. Please try again.";
+}
+
+/**
+ * Ask a question about the video transcript using LangGraph's createReactAgent
+ *
+ * @param question - The question to ask about the video
+ * @param threadId - Optional thread ID to maintain conversation history across calls
+ * @returns The agent's answer based on relevant chunks from the transcript
+ */
+export async function askAboutVideo(
+  question: string,
+  threadId?: string
+): Promise<string> {
+  const agent = getAgent();
+  const config = threadId
+    ? { configurable: { thread_id: threadId } }
+    : { configurable: { thread_id: `thread-${Date.now()}` } };
+
+  const response = await agent.invoke(
+    {
+      messages: [new HumanMessage(question)],
+    },
+    config
+  );
+
+  return extractResponseText(response);
+}
+
+/**
+ * Clear conversation history for a thread
+ * @param threadId - The thread ID to clear
+ */
+export async function clearAgentMemory(threadId: string): Promise<void> {
+  await checkpointer.deleteThread(threadId);
+}
+
+/**
+ * Get conversation history for a thread (via checkpoint)
+ * Note: This returns the checkpoint state, not raw messages
+ * @param threadId - The thread ID
+ * @returns The checkpoint state or null if thread doesn't exist
+ */
+export async function getAgentMemory(threadId: string) {
+  try {
+    const checkpoint = await checkpointer.get({
+      configurable: { thread_id: threadId },
+    });
+    return checkpoint;
+  } catch {
+    return null;
+  }
 }
 
 /**
