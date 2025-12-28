@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,13 +8,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@repo/design-system/components/ui/dialog";
-import { Button } from "@repo/design-system/components/ui/button";
-import { FileText, Type, ArrowLeft, Youtube, Globe } from "lucide-react";
+import { ArrowLeft, FileText, Globe, Type, Youtube } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { PdfSummaryUploader } from "@/components/pdf-summary-uploader";
 import { TextInputForm } from "./text-input-form";
 import { WebpageInputForm } from "./webpage-input-form";
+import { YouTubeInputForm } from "./youtube-input-form";
 
-type ModalMode = "select" | "file" | "text" | "web";
+type ModalMode = "select" | "file" | "text" | "web" | "youtube";
 
 type NoteGenerationModalProps = {
   children: React.ReactNode;
@@ -45,7 +46,7 @@ export function NoteGenerationModal({ children }: NoteGenerationModalProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog onOpenChange={handleOpenChange} open={open}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
@@ -54,39 +55,40 @@ export function NoteGenerationModal({ children }: NoteGenerationModalProps) {
             {mode === "file" && "Upload PDF"}
             {mode === "text" && "Generate from Text"}
             {mode === "web" && "Webpage to Note"}
+            {mode === "youtube" && "YouTube to Note"}
           </DialogTitle>
         </DialogHeader>
 
         {mode === "select" && (
           <div className="grid grid-cols-2 gap-4 py-4">
             <Button
-              variant="outline"
               className="h-auto flex-col gap-3 py-6"
               onClick={() => setMode("file")}
+              variant="outline"
             >
               <FileText className="size-6" />
               <span className="text-base">Upload File</span>
             </Button>
             <Button
-              variant="outline"
               className="h-auto flex-col gap-3 py-6"
               onClick={() => setMode("text")}
+              variant="outline"
             >
               <Type className="size-6" />
               <span className="text-base">Generate from Text</span>
             </Button>
             <Button
-              variant="outline"
               className="h-auto flex-col gap-3 py-6"
-              disabled
+              onClick={() => setMode("youtube")}
+              variant="outline"
             >
               <Youtube className="size-6" />
               <span className="text-base">YouTube to Note</span>
             </Button>
             <Button
-              variant="outline"
               className="h-auto flex-col gap-3 py-6"
               onClick={() => setMode("web")}
+              variant="outline"
             >
               <Globe className="size-6" />
               <span className="text-base">Webpage to Note</span>
@@ -97,10 +99,10 @@ export function NoteGenerationModal({ children }: NoteGenerationModalProps) {
         {mode === "file" && (
           <div className="space-y-4">
             <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleBack}
               className="mb-2"
+              onClick={handleBack}
+              size="sm"
+              variant="ghost"
             >
               <ArrowLeft className="size-4" />
               Back
@@ -112,10 +114,10 @@ export function NoteGenerationModal({ children }: NoteGenerationModalProps) {
         {mode === "text" && (
           <div className="space-y-4">
             <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleBack}
               className="mb-2"
+              onClick={handleBack}
+              size="sm"
+              variant="ghost"
             >
               <ArrowLeft className="size-4" />
               Back
@@ -127,10 +129,10 @@ export function NoteGenerationModal({ children }: NoteGenerationModalProps) {
         {mode === "web" && (
           <div className="space-y-4">
             <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleBack}
               className="mb-2"
+              onClick={handleBack}
+              size="sm"
+              variant="ghost"
             >
               <ArrowLeft className="size-4" />
               Back
@@ -138,8 +140,22 @@ export function NoteGenerationModal({ children }: NoteGenerationModalProps) {
             <WebpageInputForm onSuccess={handleSuccess} />
           </div>
         )}
+
+        {mode === "youtube" && (
+          <div className="space-y-4">
+            <Button
+              className="mb-2"
+              onClick={handleBack}
+              size="sm"
+              variant="ghost"
+            >
+              <ArrowLeft className="size-4" />
+              Back
+            </Button>
+            <YouTubeInputForm onSuccess={handleSuccess} />
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
 }
-
