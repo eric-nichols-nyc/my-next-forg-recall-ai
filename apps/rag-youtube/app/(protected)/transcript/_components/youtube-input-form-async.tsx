@@ -161,6 +161,7 @@ export function YouTubeInputFormAsync({ onSuccess }: YouTubeInputFormProps) {
       });
 
       const data = await response.json();
+      console.log("1. data = ", data);
 
       if (!response.ok) {
         throw new Error(

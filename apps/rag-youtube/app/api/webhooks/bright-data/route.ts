@@ -282,7 +282,7 @@ async function processWebhookPayload(record: BrightDataVideoRecord): Promise<{
   ) {
     updateData.url = finalVideoUrl;
   }
-  if (record.title && !sourceInfo.existingSource) {
+  if (record.title) {
     updateData.title = record.title;
   }
   if (Object.keys(updateData).length > 0) {

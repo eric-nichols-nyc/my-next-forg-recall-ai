@@ -8,15 +8,13 @@ import {
   CardTitle,
 } from "@repo/design-system/components/ui/card";
 import { VideoIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { YouTubeInputFormAsync } from "../../notes/_components/youtube-input-form-async";
+import { YouTubeInputFormAsync } from "./youtube-input-form-async";
 
 export function TranscriptEmptyState() {
-  const router = useRouter();
-
   const handleSuccess = (sourceId: string) => {
+    console.log("sourceId. =", sourceId);
     // Navigate to the note page when transcript is ready
-    router.push(`/notes/${sourceId}`);
+    //router.push(`/notes/${sourceId}`);
   };
 
   return (

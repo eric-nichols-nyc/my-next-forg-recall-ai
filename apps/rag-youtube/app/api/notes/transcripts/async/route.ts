@@ -97,10 +97,9 @@ async function triggerBrightDataRequest(
       url: requestUrl,
       body: requestBody,
       note: "sourceId and ownerId not included - Bright Data doesn't accept custom fields. Will match by URL in webhook.",
-      sourceId,
-      ownerId,
       videoUrl,
     });
+    // post goes to brightdata
 
     const triggerResponse = await fetch(requestUrl, {
       method: "POST",
