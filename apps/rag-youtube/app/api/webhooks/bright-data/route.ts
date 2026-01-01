@@ -15,7 +15,8 @@ type BrightDataVideoRecord = {
   transcript?: string; // Raw transcript as string
   formatted_transcript?: Array<{
     text?: string;
-    start?: number;
+    start_time?: number; // Bright Data sends this (in seconds)
+    end_time?: number;
     duration?: number;
     offset?: number;
     [key: string]: unknown;
@@ -147,11 +148,94 @@ async function getOrCreateSource(record: BrightDataVideoRecord): Promise<{
 }
 
 /**
+ * Calculate startSec from various timestamp formats
+ */
+function calculateStartSec(
+  startTime?: number,
+  start?: number,
+  offset?: number
+): number | undefined {
+  if (startTime !== undefined) {
+    return startTime;
+  }
+  if (start !== undefined) {
+    return start;
+  }
+  if (offset !== undefined) {
+    return Math.floor(offset / 1000);
+  }
+}
+
+/**
+ * Calculate endSec from various timestamp formats
+ */
+function calculateEndSec(
+  endTime?: number,
+  start?: number,
+  duration?: number,
+  offset?: number
+): number | undefined {
+  if (endTime !== undefined) {
+    return endTime;
+  }
+  if (start !== undefined && duration !== undefined) {
+    return start + duration;
+  }
+  if (offset !== undefined && duration !== undefined) {
+    return Math.floor((offset + duration) / 1000);
+  }
+}
+
+/**
+ * Normalize a single transcript item from Bright Data format
+ */
+function normalizeTranscriptItem(item: {
+  text?: string;
+  start_time?: number;
+  end_time?: number;
+  start?: number;
+  duration?: number;
+  offset?: number;
+  [key: string]: unknown;
+}): {
+  text: string;
+  startSec?: number;
+  endSec?: number;
+  offset?: number;
+  duration?: number;
+} {
+  const text = item.text || String(item);
+  const startTime =
+    typeof item.start_time === "number" ? item.start_time : undefined;
+  const endTime = typeof item.end_time === "number" ? item.end_time : undefined;
+  const start = typeof item.start === "number" ? item.start : undefined;
+  const duration =
+    typeof item.duration === "number" ? item.duration : undefined;
+  const offset = typeof item.offset === "number" ? item.offset : undefined;
+
+  const startSec = calculateStartSec(startTime, start, offset);
+  const endSec = calculateEndSec(endTime, start, duration, offset);
+
+  return {
+    text,
+    startSec,
+    endSec,
+    // Keep offset/duration for backwards compatibility
+    offset: offset ?? (start !== undefined ? start * 1000 : undefined),
+    duration: duration !== undefined ? duration * 1000 : undefined,
+  };
+}
+
+/**
  * Extract and normalize transcript from Bright Data format
  */
-function extractTranscript(
-  record: BrightDataVideoRecord
-): Array<{ text: string; offset?: number; duration?: number }> {
+function extractTranscript(record: BrightDataVideoRecord): Array<{
+  text: string;
+  startSec?: number;
+  endSec?: number;
+  offset?: number;
+  duration?: number;
+}> {
   // Prefer formatted_transcript if available
   if (
     record.formatted_transcript &&
@@ -159,11 +243,7 @@ function extractTranscript(
   ) {
     return record.formatted_transcript
       .filter((item) => item && typeof item === "object")
-      .map((item) => ({
-        text: item.text || String(item),
-        offset: item.offset ?? (item.start ? item.start * 1000 : undefined),
-        duration: item.duration ? item.duration * 1000 : undefined,
-      }));
+      .map((item) => normalizeTranscriptItem(item));
   }
 
   // Fallback to raw transcript string
