@@ -66,11 +66,12 @@ function getVectorStore(): Promise<PGVectorStore> {
         connectionString: databaseUrl,
       },
       tableName: "Chunk", // Using existing Chunk table
+      contentColumnName: "text", // Our table uses "text" instead of "content"
       // Note: The Chunk table must have the following columns for PGVector:
       // - id (uuid, primary key) - already exists
-      // - content (text) - already exists
-      // - metadata (jsonb) - needs to be added
-      // - embedding (vector) - needs to be added
+      // - text (text) - content column
+      // - metadata (jsonb) - already exists
+      // - embedding (vector) - already exists
     });
   }
 

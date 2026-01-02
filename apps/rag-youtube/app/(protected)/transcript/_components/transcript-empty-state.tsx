@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@repo/design-system/components/ui/card";
 import { VideoIcon } from "lucide-react";
-import { YouTubeInputFormAsync } from "./youtube-input-form-async";
+import { YouTubeActionsForm } from "./youtube-actions-form";
 
 export function TranscriptEmptyState() {
   const handleSuccess = (sourceId: string) => {
@@ -31,7 +31,7 @@ export function TranscriptEmptyState() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <YouTubeInputFormAsync onSuccess={handleSuccess} />
+          <YouTubeActionsForm onSuccess={handleSuccess} />
         </CardContent>
       </Card>
     </div>

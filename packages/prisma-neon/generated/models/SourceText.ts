@@ -252,7 +252,7 @@ export type SourceTextWhereInput = {
   OR?: Prisma.SourceTextWhereInput[]
   NOT?: Prisma.SourceTextWhereInput | Prisma.SourceTextWhereInput[]
   id?: Prisma.UuidFilter<"SourceText"> | string
-  ownerId?: Prisma.StringFilter<"SourceText"> | string
+  ownerId?: Prisma.UuidFilter<"SourceText"> | string
   sourceId?: Prisma.UuidFilter<"SourceText"> | string
   ordinal?: Prisma.IntFilter<"SourceText"> | number
   pageNumber?: Prisma.IntNullableFilter<"SourceText"> | number | null
@@ -263,7 +263,6 @@ export type SourceTextWhereInput = {
   source?: Prisma.XOR<Prisma.SourceScalarRelationFilter, Prisma.SourceWhereInput>
   flashcards?: Prisma.FlashcardListRelationFilter
   questions?: Prisma.QuizQuestionListRelationFilter
-  chunks?: Prisma.ChunkListRelationFilter
 }
 
 export type SourceTextOrderByWithRelationInput = {
@@ -279,7 +278,6 @@ export type SourceTextOrderByWithRelationInput = {
   source?: Prisma.SourceOrderByWithRelationInput
   flashcards?: Prisma.FlashcardOrderByRelationAggregateInput
   questions?: Prisma.QuizQuestionOrderByRelationAggregateInput
-  chunks?: Prisma.ChunkOrderByRelationAggregateInput
 }
 
 export type SourceTextWhereUniqueInput = Prisma.AtLeast<{
@@ -288,7 +286,7 @@ export type SourceTextWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.SourceTextWhereInput | Prisma.SourceTextWhereInput[]
   OR?: Prisma.SourceTextWhereInput[]
   NOT?: Prisma.SourceTextWhereInput | Prisma.SourceTextWhereInput[]
-  ownerId?: Prisma.StringFilter<"SourceText"> | string
+  ownerId?: Prisma.UuidFilter<"SourceText"> | string
   sourceId?: Prisma.UuidFilter<"SourceText"> | string
   ordinal?: Prisma.IntFilter<"SourceText"> | number
   pageNumber?: Prisma.IntNullableFilter<"SourceText"> | number | null
@@ -299,7 +297,6 @@ export type SourceTextWhereUniqueInput = Prisma.AtLeast<{
   source?: Prisma.XOR<Prisma.SourceScalarRelationFilter, Prisma.SourceWhereInput>
   flashcards?: Prisma.FlashcardListRelationFilter
   questions?: Prisma.QuizQuestionListRelationFilter
-  chunks?: Prisma.ChunkListRelationFilter
 }, "id" | "sourceId_ordinal">
 
 export type SourceTextOrderByWithAggregationInput = {
@@ -324,7 +321,7 @@ export type SourceTextScalarWhereWithAggregatesInput = {
   OR?: Prisma.SourceTextScalarWhereWithAggregatesInput[]
   NOT?: Prisma.SourceTextScalarWhereWithAggregatesInput | Prisma.SourceTextScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"SourceText"> | string
-  ownerId?: Prisma.StringWithAggregatesFilter<"SourceText"> | string
+  ownerId?: Prisma.UuidWithAggregatesFilter<"SourceText"> | string
   sourceId?: Prisma.UuidWithAggregatesFilter<"SourceText"> | string
   ordinal?: Prisma.IntWithAggregatesFilter<"SourceText"> | number
   pageNumber?: Prisma.IntNullableWithAggregatesFilter<"SourceText"> | number | null
@@ -336,7 +333,7 @@ export type SourceTextScalarWhereWithAggregatesInput = {
 
 export type SourceTextCreateInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   ordinal: number
   pageNumber?: number | null
   startSec?: number | null
@@ -346,12 +343,11 @@ export type SourceTextCreateInput = {
   source: Prisma.SourceCreateNestedOneWithoutTextsInput
   flashcards?: Prisma.FlashcardCreateNestedManyWithoutSourceTextInput
   questions?: Prisma.QuizQuestionCreateNestedManyWithoutSourceTextInput
-  chunks?: Prisma.ChunkCreateNestedManyWithoutSourceTextInput
 }
 
 export type SourceTextUncheckedCreateInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   sourceId: string
   ordinal: number
   pageNumber?: number | null
@@ -361,7 +357,6 @@ export type SourceTextUncheckedCreateInput = {
   createdAt?: Date | string
   flashcards?: Prisma.FlashcardUncheckedCreateNestedManyWithoutSourceTextInput
   questions?: Prisma.QuizQuestionUncheckedCreateNestedManyWithoutSourceTextInput
-  chunks?: Prisma.ChunkUncheckedCreateNestedManyWithoutSourceTextInput
 }
 
 export type SourceTextUpdateInput = {
@@ -376,7 +371,6 @@ export type SourceTextUpdateInput = {
   source?: Prisma.SourceUpdateOneRequiredWithoutTextsNestedInput
   flashcards?: Prisma.FlashcardUpdateManyWithoutSourceTextNestedInput
   questions?: Prisma.QuizQuestionUpdateManyWithoutSourceTextNestedInput
-  chunks?: Prisma.ChunkUpdateManyWithoutSourceTextNestedInput
 }
 
 export type SourceTextUncheckedUpdateInput = {
@@ -391,12 +385,11 @@ export type SourceTextUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   flashcards?: Prisma.FlashcardUncheckedUpdateManyWithoutSourceTextNestedInput
   questions?: Prisma.QuizQuestionUncheckedUpdateManyWithoutSourceTextNestedInput
-  chunks?: Prisma.ChunkUncheckedUpdateManyWithoutSourceTextNestedInput
 }
 
 export type SourceTextCreateManyInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   sourceId: string
   ordinal: number
   pageNumber?: number | null
@@ -589,25 +582,9 @@ export type SourceTextUpdateOneWithoutQuestionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.SourceTextUpdateToOneWithWhereWithoutQuestionsInput, Prisma.SourceTextUpdateWithoutQuestionsInput>, Prisma.SourceTextUncheckedUpdateWithoutQuestionsInput>
 }
 
-export type SourceTextCreateNestedOneWithoutChunksInput = {
-  create?: Prisma.XOR<Prisma.SourceTextCreateWithoutChunksInput, Prisma.SourceTextUncheckedCreateWithoutChunksInput>
-  connectOrCreate?: Prisma.SourceTextCreateOrConnectWithoutChunksInput
-  connect?: Prisma.SourceTextWhereUniqueInput
-}
-
-export type SourceTextUpdateOneWithoutChunksNestedInput = {
-  create?: Prisma.XOR<Prisma.SourceTextCreateWithoutChunksInput, Prisma.SourceTextUncheckedCreateWithoutChunksInput>
-  connectOrCreate?: Prisma.SourceTextCreateOrConnectWithoutChunksInput
-  upsert?: Prisma.SourceTextUpsertWithoutChunksInput
-  disconnect?: Prisma.SourceTextWhereInput | boolean
-  delete?: Prisma.SourceTextWhereInput | boolean
-  connect?: Prisma.SourceTextWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.SourceTextUpdateToOneWithWhereWithoutChunksInput, Prisma.SourceTextUpdateWithoutChunksInput>, Prisma.SourceTextUncheckedUpdateWithoutChunksInput>
-}
-
 export type SourceTextCreateWithoutSourceInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   ordinal: number
   pageNumber?: number | null
   startSec?: number | null
@@ -616,12 +593,11 @@ export type SourceTextCreateWithoutSourceInput = {
   createdAt?: Date | string
   flashcards?: Prisma.FlashcardCreateNestedManyWithoutSourceTextInput
   questions?: Prisma.QuizQuestionCreateNestedManyWithoutSourceTextInput
-  chunks?: Prisma.ChunkCreateNestedManyWithoutSourceTextInput
 }
 
 export type SourceTextUncheckedCreateWithoutSourceInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   ordinal: number
   pageNumber?: number | null
   startSec?: number | null
@@ -630,7 +606,6 @@ export type SourceTextUncheckedCreateWithoutSourceInput = {
   createdAt?: Date | string
   flashcards?: Prisma.FlashcardUncheckedCreateNestedManyWithoutSourceTextInput
   questions?: Prisma.QuizQuestionUncheckedCreateNestedManyWithoutSourceTextInput
-  chunks?: Prisma.ChunkUncheckedCreateNestedManyWithoutSourceTextInput
 }
 
 export type SourceTextCreateOrConnectWithoutSourceInput = {
@@ -664,7 +639,7 @@ export type SourceTextScalarWhereInput = {
   OR?: Prisma.SourceTextScalarWhereInput[]
   NOT?: Prisma.SourceTextScalarWhereInput | Prisma.SourceTextScalarWhereInput[]
   id?: Prisma.UuidFilter<"SourceText"> | string
-  ownerId?: Prisma.StringFilter<"SourceText"> | string
+  ownerId?: Prisma.UuidFilter<"SourceText"> | string
   sourceId?: Prisma.UuidFilter<"SourceText"> | string
   ordinal?: Prisma.IntFilter<"SourceText"> | number
   pageNumber?: Prisma.IntNullableFilter<"SourceText"> | number | null
@@ -676,7 +651,7 @@ export type SourceTextScalarWhereInput = {
 
 export type SourceTextCreateWithoutFlashcardsInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   ordinal: number
   pageNumber?: number | null
   startSec?: number | null
@@ -685,12 +660,11 @@ export type SourceTextCreateWithoutFlashcardsInput = {
   createdAt?: Date | string
   source: Prisma.SourceCreateNestedOneWithoutTextsInput
   questions?: Prisma.QuizQuestionCreateNestedManyWithoutSourceTextInput
-  chunks?: Prisma.ChunkCreateNestedManyWithoutSourceTextInput
 }
 
 export type SourceTextUncheckedCreateWithoutFlashcardsInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   sourceId: string
   ordinal: number
   pageNumber?: number | null
@@ -699,7 +673,6 @@ export type SourceTextUncheckedCreateWithoutFlashcardsInput = {
   text: string
   createdAt?: Date | string
   questions?: Prisma.QuizQuestionUncheckedCreateNestedManyWithoutSourceTextInput
-  chunks?: Prisma.ChunkUncheckedCreateNestedManyWithoutSourceTextInput
 }
 
 export type SourceTextCreateOrConnectWithoutFlashcardsInput = {
@@ -729,7 +702,6 @@ export type SourceTextUpdateWithoutFlashcardsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   source?: Prisma.SourceUpdateOneRequiredWithoutTextsNestedInput
   questions?: Prisma.QuizQuestionUpdateManyWithoutSourceTextNestedInput
-  chunks?: Prisma.ChunkUpdateManyWithoutSourceTextNestedInput
 }
 
 export type SourceTextUncheckedUpdateWithoutFlashcardsInput = {
@@ -743,12 +715,11 @@ export type SourceTextUncheckedUpdateWithoutFlashcardsInput = {
   text?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   questions?: Prisma.QuizQuestionUncheckedUpdateManyWithoutSourceTextNestedInput
-  chunks?: Prisma.ChunkUncheckedUpdateManyWithoutSourceTextNestedInput
 }
 
 export type SourceTextCreateWithoutQuestionsInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   ordinal: number
   pageNumber?: number | null
   startSec?: number | null
@@ -757,12 +728,11 @@ export type SourceTextCreateWithoutQuestionsInput = {
   createdAt?: Date | string
   source: Prisma.SourceCreateNestedOneWithoutTextsInput
   flashcards?: Prisma.FlashcardCreateNestedManyWithoutSourceTextInput
-  chunks?: Prisma.ChunkCreateNestedManyWithoutSourceTextInput
 }
 
 export type SourceTextUncheckedCreateWithoutQuestionsInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   sourceId: string
   ordinal: number
   pageNumber?: number | null
@@ -771,7 +741,6 @@ export type SourceTextUncheckedCreateWithoutQuestionsInput = {
   text: string
   createdAt?: Date | string
   flashcards?: Prisma.FlashcardUncheckedCreateNestedManyWithoutSourceTextInput
-  chunks?: Prisma.ChunkUncheckedCreateNestedManyWithoutSourceTextInput
 }
 
 export type SourceTextCreateOrConnectWithoutQuestionsInput = {
@@ -801,7 +770,6 @@ export type SourceTextUpdateWithoutQuestionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   source?: Prisma.SourceUpdateOneRequiredWithoutTextsNestedInput
   flashcards?: Prisma.FlashcardUpdateManyWithoutSourceTextNestedInput
-  chunks?: Prisma.ChunkUpdateManyWithoutSourceTextNestedInput
 }
 
 export type SourceTextUncheckedUpdateWithoutQuestionsInput = {
@@ -815,84 +783,11 @@ export type SourceTextUncheckedUpdateWithoutQuestionsInput = {
   text?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   flashcards?: Prisma.FlashcardUncheckedUpdateManyWithoutSourceTextNestedInput
-  chunks?: Prisma.ChunkUncheckedUpdateManyWithoutSourceTextNestedInput
-}
-
-export type SourceTextCreateWithoutChunksInput = {
-  id?: string
-  ownerId: string
-  ordinal: number
-  pageNumber?: number | null
-  startSec?: number | null
-  endSec?: number | null
-  text: string
-  createdAt?: Date | string
-  source: Prisma.SourceCreateNestedOneWithoutTextsInput
-  flashcards?: Prisma.FlashcardCreateNestedManyWithoutSourceTextInput
-  questions?: Prisma.QuizQuestionCreateNestedManyWithoutSourceTextInput
-}
-
-export type SourceTextUncheckedCreateWithoutChunksInput = {
-  id?: string
-  ownerId: string
-  sourceId: string
-  ordinal: number
-  pageNumber?: number | null
-  startSec?: number | null
-  endSec?: number | null
-  text: string
-  createdAt?: Date | string
-  flashcards?: Prisma.FlashcardUncheckedCreateNestedManyWithoutSourceTextInput
-  questions?: Prisma.QuizQuestionUncheckedCreateNestedManyWithoutSourceTextInput
-}
-
-export type SourceTextCreateOrConnectWithoutChunksInput = {
-  where: Prisma.SourceTextWhereUniqueInput
-  create: Prisma.XOR<Prisma.SourceTextCreateWithoutChunksInput, Prisma.SourceTextUncheckedCreateWithoutChunksInput>
-}
-
-export type SourceTextUpsertWithoutChunksInput = {
-  update: Prisma.XOR<Prisma.SourceTextUpdateWithoutChunksInput, Prisma.SourceTextUncheckedUpdateWithoutChunksInput>
-  create: Prisma.XOR<Prisma.SourceTextCreateWithoutChunksInput, Prisma.SourceTextUncheckedCreateWithoutChunksInput>
-  where?: Prisma.SourceTextWhereInput
-}
-
-export type SourceTextUpdateToOneWithWhereWithoutChunksInput = {
-  where?: Prisma.SourceTextWhereInput
-  data: Prisma.XOR<Prisma.SourceTextUpdateWithoutChunksInput, Prisma.SourceTextUncheckedUpdateWithoutChunksInput>
-}
-
-export type SourceTextUpdateWithoutChunksInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
-  ordinal?: Prisma.IntFieldUpdateOperationsInput | number
-  pageNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  startSec?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  endSec?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  text?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  source?: Prisma.SourceUpdateOneRequiredWithoutTextsNestedInput
-  flashcards?: Prisma.FlashcardUpdateManyWithoutSourceTextNestedInput
-  questions?: Prisma.QuizQuestionUpdateManyWithoutSourceTextNestedInput
-}
-
-export type SourceTextUncheckedUpdateWithoutChunksInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
-  sourceId?: Prisma.StringFieldUpdateOperationsInput | string
-  ordinal?: Prisma.IntFieldUpdateOperationsInput | number
-  pageNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  startSec?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  endSec?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  text?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  flashcards?: Prisma.FlashcardUncheckedUpdateManyWithoutSourceTextNestedInput
-  questions?: Prisma.QuizQuestionUncheckedUpdateManyWithoutSourceTextNestedInput
 }
 
 export type SourceTextCreateManySourceInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   ordinal: number
   pageNumber?: number | null
   startSec?: number | null
@@ -912,7 +807,6 @@ export type SourceTextUpdateWithoutSourceInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   flashcards?: Prisma.FlashcardUpdateManyWithoutSourceTextNestedInput
   questions?: Prisma.QuizQuestionUpdateManyWithoutSourceTextNestedInput
-  chunks?: Prisma.ChunkUpdateManyWithoutSourceTextNestedInput
 }
 
 export type SourceTextUncheckedUpdateWithoutSourceInput = {
@@ -926,7 +820,6 @@ export type SourceTextUncheckedUpdateWithoutSourceInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   flashcards?: Prisma.FlashcardUncheckedUpdateManyWithoutSourceTextNestedInput
   questions?: Prisma.QuizQuestionUncheckedUpdateManyWithoutSourceTextNestedInput
-  chunks?: Prisma.ChunkUncheckedUpdateManyWithoutSourceTextNestedInput
 }
 
 export type SourceTextUncheckedUpdateManyWithoutSourceInput = {
@@ -948,13 +841,11 @@ export type SourceTextUncheckedUpdateManyWithoutSourceInput = {
 export type SourceTextCountOutputType = {
   flashcards: number
   questions: number
-  chunks: number
 }
 
 export type SourceTextCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   flashcards?: boolean | SourceTextCountOutputTypeCountFlashcardsArgs
   questions?: boolean | SourceTextCountOutputTypeCountQuestionsArgs
-  chunks?: boolean | SourceTextCountOutputTypeCountChunksArgs
 }
 
 /**
@@ -981,13 +872,6 @@ export type SourceTextCountOutputTypeCountQuestionsArgs<ExtArgs extends runtime.
   where?: Prisma.QuizQuestionWhereInput
 }
 
-/**
- * SourceTextCountOutputType without action
- */
-export type SourceTextCountOutputTypeCountChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ChunkWhereInput
-}
-
 
 export type SourceTextSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1002,7 +886,6 @@ export type SourceTextSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   source?: boolean | Prisma.SourceDefaultArgs<ExtArgs>
   flashcards?: boolean | Prisma.SourceText$flashcardsArgs<ExtArgs>
   questions?: boolean | Prisma.SourceText$questionsArgs<ExtArgs>
-  chunks?: boolean | Prisma.SourceText$chunksArgs<ExtArgs>
   _count?: boolean | Prisma.SourceTextCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sourceText"]>
 
@@ -1049,7 +932,6 @@ export type SourceTextInclude<ExtArgs extends runtime.Types.Extensions.InternalA
   source?: boolean | Prisma.SourceDefaultArgs<ExtArgs>
   flashcards?: boolean | Prisma.SourceText$flashcardsArgs<ExtArgs>
   questions?: boolean | Prisma.SourceText$questionsArgs<ExtArgs>
-  chunks?: boolean | Prisma.SourceText$chunksArgs<ExtArgs>
   _count?: boolean | Prisma.SourceTextCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SourceTextIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1065,7 +947,6 @@ export type $SourceTextPayload<ExtArgs extends runtime.Types.Extensions.Internal
     source: Prisma.$SourcePayload<ExtArgs>
     flashcards: Prisma.$FlashcardPayload<ExtArgs>[]
     questions: Prisma.$QuizQuestionPayload<ExtArgs>[]
-    chunks: Prisma.$ChunkPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1474,7 +1355,6 @@ export interface Prisma__SourceTextClient<T, Null = never, ExtArgs extends runti
   source<T extends Prisma.SourceDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SourceDefaultArgs<ExtArgs>>): Prisma.Prisma__SourceClient<runtime.Types.Result.GetResult<Prisma.$SourcePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   flashcards<T extends Prisma.SourceText$flashcardsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SourceText$flashcardsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FlashcardPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   questions<T extends Prisma.SourceText$questionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SourceText$questionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuizQuestionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  chunks<T extends Prisma.SourceText$chunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SourceText$chunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1954,30 +1834,6 @@ export type SourceText$questionsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.QuizQuestionScalarFieldEnum | Prisma.QuizQuestionScalarFieldEnum[]
-}
-
-/**
- * SourceText.chunks
- */
-export type SourceText$chunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Chunk
-   */
-  select?: Prisma.ChunkSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Chunk
-   */
-  omit?: Prisma.ChunkOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ChunkInclude<ExtArgs> | null
-  where?: Prisma.ChunkWhereInput
-  orderBy?: Prisma.ChunkOrderByWithRelationInput | Prisma.ChunkOrderByWithRelationInput[]
-  cursor?: Prisma.ChunkWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ChunkScalarFieldEnum | Prisma.ChunkScalarFieldEnum[]
 }
 
 /**

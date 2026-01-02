@@ -26,3 +26,38 @@ export const ChatRole = {
 } as const
 
 export type ChatRole = (typeof ChatRole)[keyof typeof ChatRole]
+
+
+export const JobType = {
+  YOUTUBE_FETCH_TRANSCRIPT: 'YOUTUBE_FETCH_TRANSCRIPT',
+  SOURCE_CHUNK: 'SOURCE_CHUNK',
+  SOURCE_EMBED: 'SOURCE_EMBED',
+  NOTE_GENERATE_SUMMARY: 'NOTE_GENERATE_SUMMARY'
+} as const
+
+export type JobType = (typeof JobType)[keyof typeof JobType]
+
+
+export const JobStatus = {
+  QUEUED: 'QUEUED',
+  PROCESSING: 'PROCESSING',
+  SUCCEEDED: 'SUCCEEDED',
+  FAILED: 'FAILED'
+} as const
+
+export type JobStatus = (typeof JobStatus)[keyof typeof JobStatus]
+
+
+export const JobErrorCode = {
+  INVALID_URL: 'INVALID_URL',
+  METADATA_FETCH_FAILED: 'METADATA_FETCH_FAILED',
+  TRANSCRIPT_UNAVAILABLE: 'TRANSCRIPT_UNAVAILABLE',
+  TRANSCRIPT_FETCH_FAILED: 'TRANSCRIPT_FETCH_FAILED',
+  CHUNKING_FAILED: 'CHUNKING_FAILED',
+  EMBEDDING_FAILED: 'EMBEDDING_FAILED',
+  SUMMARY_FAILED: 'SUMMARY_FAILED',
+  DB_WRITE_FAILED: 'DB_WRITE_FAILED',
+  UNKNOWN: 'UNKNOWN'
+} as const
+
+export type JobErrorCode = (typeof JobErrorCode)[keyof typeof JobErrorCode]

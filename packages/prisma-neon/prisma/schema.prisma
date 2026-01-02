@@ -131,11 +131,41 @@ model ChatMessage {
   @@index([ownerId])
 }
 
-model chunk {
-  id        String                 @id(map: "chunk_pkey1") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  text      String?
-  metadata  Json?
-  embedding Unsupported("vector")?
+model Chunk {
+  id         String                 @id(map: "chunk_pkey1") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ownerId    String                 @default(dbgenerated("auth.uid()")) @db.Uuid
+  sourceId   String                 @db.Uuid
+  chunkIndex Int
+  text       String?
+  metadata   Json?
+  embedding  Unsupported("vector")?
+
+  @@unique([sourceId, chunkIndex])
+  @@index([ownerId])
+  @@index([sourceId, chunkIndex])
+}
+
+model Job {
+  id           String        @id @default(cuid())
+  ownerId      String
+  sourceId     String?
+  type         JobType
+  status       JobStatus     @default(QUEUED)
+  attempts     Int           @default(0)
+  maxAttempts  Int           @default(3)
+  errorCode    JobErrorCode?
+  errorMessage String?
+  payload      Json?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  startedAt    DateTime?
+  finishedAt   DateTime?
+
+  @@unique([ownerId, sourceId, type, status])
+  @@index([ownerId, createdAt])
+  @@index([sourceId, createdAt])
+  @@index([status, createdAt])
+  @@index([type, status, createdAt])
 }
 
 enum SourceType {
@@ -149,4 +179,30 @@ enum ChatRole {
   user
   assistant
   system
+}
+
+enum JobType {
+  YOUTUBE_FETCH_TRANSCRIPT
+  SOURCE_CHUNK
+  SOURCE_EMBED
+  NOTE_GENERATE_SUMMARY
+}
+
+enum JobStatus {
+  QUEUED
+  PROCESSING
+  SUCCEEDED
+  FAILED
+}
+
+enum JobErrorCode {
+  INVALID_URL
+  METADATA_FETCH_FAILED
+  TRANSCRIPT_UNAVAILABLE
+  TRANSCRIPT_FETCH_FAILED
+  CHUNKING_FAILED
+  EMBEDDING_FAILED
+  SUMMARY_FAILED
+  DB_WRITE_FAILED
+  UNKNOWN
 }

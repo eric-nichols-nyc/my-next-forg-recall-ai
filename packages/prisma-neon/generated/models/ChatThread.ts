@@ -171,7 +171,7 @@ export type ChatThreadWhereInput = {
   OR?: Prisma.ChatThreadWhereInput[]
   NOT?: Prisma.ChatThreadWhereInput | Prisma.ChatThreadWhereInput[]
   id?: Prisma.UuidFilter<"ChatThread"> | string
-  ownerId?: Prisma.StringFilter<"ChatThread"> | string
+  ownerId?: Prisma.UuidFilter<"ChatThread"> | string
   sourceId?: Prisma.UuidFilter<"ChatThread"> | string
   createdAt?: Prisma.DateTimeFilter<"ChatThread"> | Date | string
   source?: Prisma.XOR<Prisma.SourceScalarRelationFilter, Prisma.SourceWhereInput>
@@ -192,7 +192,7 @@ export type ChatThreadWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.ChatThreadWhereInput | Prisma.ChatThreadWhereInput[]
   OR?: Prisma.ChatThreadWhereInput[]
   NOT?: Prisma.ChatThreadWhereInput | Prisma.ChatThreadWhereInput[]
-  ownerId?: Prisma.StringFilter<"ChatThread"> | string
+  ownerId?: Prisma.UuidFilter<"ChatThread"> | string
   sourceId?: Prisma.UuidFilter<"ChatThread"> | string
   createdAt?: Prisma.DateTimeFilter<"ChatThread"> | Date | string
   source?: Prisma.XOR<Prisma.SourceScalarRelationFilter, Prisma.SourceWhereInput>
@@ -214,14 +214,14 @@ export type ChatThreadScalarWhereWithAggregatesInput = {
   OR?: Prisma.ChatThreadScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ChatThreadScalarWhereWithAggregatesInput | Prisma.ChatThreadScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"ChatThread"> | string
-  ownerId?: Prisma.StringWithAggregatesFilter<"ChatThread"> | string
+  ownerId?: Prisma.UuidWithAggregatesFilter<"ChatThread"> | string
   sourceId?: Prisma.UuidWithAggregatesFilter<"ChatThread"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ChatThread"> | Date | string
 }
 
 export type ChatThreadCreateInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   createdAt?: Date | string
   source: Prisma.SourceCreateNestedOneWithoutThreadsInput
   messages?: Prisma.ChatMessageCreateNestedManyWithoutThreadInput
@@ -229,7 +229,7 @@ export type ChatThreadCreateInput = {
 
 export type ChatThreadUncheckedCreateInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   sourceId: string
   createdAt?: Date | string
   messages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutThreadInput
@@ -253,7 +253,7 @@ export type ChatThreadUncheckedUpdateInput = {
 
 export type ChatThreadCreateManyInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   sourceId: string
   createdAt?: Date | string
 }
@@ -365,14 +365,14 @@ export type ChatThreadUpdateOneRequiredWithoutMessagesNestedInput = {
 
 export type ChatThreadCreateWithoutSourceInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   createdAt?: Date | string
   messages?: Prisma.ChatMessageCreateNestedManyWithoutThreadInput
 }
 
 export type ChatThreadUncheckedCreateWithoutSourceInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   createdAt?: Date | string
   messages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutThreadInput
 }
@@ -408,21 +408,21 @@ export type ChatThreadScalarWhereInput = {
   OR?: Prisma.ChatThreadScalarWhereInput[]
   NOT?: Prisma.ChatThreadScalarWhereInput | Prisma.ChatThreadScalarWhereInput[]
   id?: Prisma.UuidFilter<"ChatThread"> | string
-  ownerId?: Prisma.StringFilter<"ChatThread"> | string
+  ownerId?: Prisma.UuidFilter<"ChatThread"> | string
   sourceId?: Prisma.UuidFilter<"ChatThread"> | string
   createdAt?: Prisma.DateTimeFilter<"ChatThread"> | Date | string
 }
 
 export type ChatThreadCreateWithoutMessagesInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   createdAt?: Date | string
   source: Prisma.SourceCreateNestedOneWithoutThreadsInput
 }
 
 export type ChatThreadUncheckedCreateWithoutMessagesInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   sourceId: string
   createdAt?: Date | string
 }
@@ -459,7 +459,7 @@ export type ChatThreadUncheckedUpdateWithoutMessagesInput = {
 
 export type ChatThreadCreateManySourceInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   createdAt?: Date | string
 }
 

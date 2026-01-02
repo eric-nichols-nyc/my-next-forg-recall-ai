@@ -199,7 +199,7 @@ export type SourceWhereInput = {
   OR?: Prisma.SourceWhereInput[]
   NOT?: Prisma.SourceWhereInput | Prisma.SourceWhereInput[]
   id?: Prisma.UuidFilter<"Source"> | string
-  ownerId?: Prisma.StringFilter<"Source"> | string
+  ownerId?: Prisma.UuidFilter<"Source"> | string
   type?: Prisma.EnumSourceTypeFilter<"Source"> | $Enums.SourceType
   title?: Prisma.StringNullableFilter<"Source"> | string | null
   url?: Prisma.StringNullableFilter<"Source"> | string | null
@@ -211,7 +211,6 @@ export type SourceWhereInput = {
   flashcards?: Prisma.FlashcardListRelationFilter
   quizzes?: Prisma.QuizListRelationFilter
   threads?: Prisma.ChatThreadListRelationFilter
-  chunks?: Prisma.ChunkListRelationFilter
 }
 
 export type SourceOrderByWithRelationInput = {
@@ -228,7 +227,6 @@ export type SourceOrderByWithRelationInput = {
   flashcards?: Prisma.FlashcardOrderByRelationAggregateInput
   quizzes?: Prisma.QuizOrderByRelationAggregateInput
   threads?: Prisma.ChatThreadOrderByRelationAggregateInput
-  chunks?: Prisma.ChunkOrderByRelationAggregateInput
 }
 
 export type SourceWhereUniqueInput = Prisma.AtLeast<{
@@ -237,7 +235,7 @@ export type SourceWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.SourceWhereInput | Prisma.SourceWhereInput[]
   OR?: Prisma.SourceWhereInput[]
   NOT?: Prisma.SourceWhereInput | Prisma.SourceWhereInput[]
-  ownerId?: Prisma.StringFilter<"Source"> | string
+  ownerId?: Prisma.UuidFilter<"Source"> | string
   type?: Prisma.EnumSourceTypeFilter<"Source"> | $Enums.SourceType
   title?: Prisma.StringNullableFilter<"Source"> | string | null
   url?: Prisma.StringNullableFilter<"Source"> | string | null
@@ -248,7 +246,6 @@ export type SourceWhereUniqueInput = Prisma.AtLeast<{
   flashcards?: Prisma.FlashcardListRelationFilter
   quizzes?: Prisma.QuizListRelationFilter
   threads?: Prisma.ChatThreadListRelationFilter
-  chunks?: Prisma.ChunkListRelationFilter
 }, "id" | "sha256">
 
 export type SourceOrderByWithAggregationInput = {
@@ -270,7 +267,7 @@ export type SourceScalarWhereWithAggregatesInput = {
   OR?: Prisma.SourceScalarWhereWithAggregatesInput[]
   NOT?: Prisma.SourceScalarWhereWithAggregatesInput | Prisma.SourceScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"Source"> | string
-  ownerId?: Prisma.StringWithAggregatesFilter<"Source"> | string
+  ownerId?: Prisma.UuidWithAggregatesFilter<"Source"> | string
   type?: Prisma.EnumSourceTypeWithAggregatesFilter<"Source"> | $Enums.SourceType
   title?: Prisma.StringNullableWithAggregatesFilter<"Source"> | string | null
   url?: Prisma.StringNullableWithAggregatesFilter<"Source"> | string | null
@@ -281,7 +278,7 @@ export type SourceScalarWhereWithAggregatesInput = {
 
 export type SourceCreateInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
@@ -293,12 +290,11 @@ export type SourceCreateInput = {
   flashcards?: Prisma.FlashcardCreateNestedManyWithoutSourceInput
   quizzes?: Prisma.QuizCreateNestedManyWithoutSourceInput
   threads?: Prisma.ChatThreadCreateNestedManyWithoutSourceInput
-  chunks?: Prisma.ChunkCreateNestedManyWithoutSourceInput
 }
 
 export type SourceUncheckedCreateInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
@@ -310,7 +306,6 @@ export type SourceUncheckedCreateInput = {
   flashcards?: Prisma.FlashcardUncheckedCreateNestedManyWithoutSourceInput
   quizzes?: Prisma.QuizUncheckedCreateNestedManyWithoutSourceInput
   threads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutSourceInput
-  chunks?: Prisma.ChunkUncheckedCreateNestedManyWithoutSourceInput
 }
 
 export type SourceUpdateInput = {
@@ -327,7 +322,6 @@ export type SourceUpdateInput = {
   flashcards?: Prisma.FlashcardUpdateManyWithoutSourceNestedInput
   quizzes?: Prisma.QuizUpdateManyWithoutSourceNestedInput
   threads?: Prisma.ChatThreadUpdateManyWithoutSourceNestedInput
-  chunks?: Prisma.ChunkUpdateManyWithoutSourceNestedInput
 }
 
 export type SourceUncheckedUpdateInput = {
@@ -344,12 +338,11 @@ export type SourceUncheckedUpdateInput = {
   flashcards?: Prisma.FlashcardUncheckedUpdateManyWithoutSourceNestedInput
   quizzes?: Prisma.QuizUncheckedUpdateManyWithoutSourceNestedInput
   threads?: Prisma.ChatThreadUncheckedUpdateManyWithoutSourceNestedInput
-  chunks?: Prisma.ChunkUncheckedUpdateManyWithoutSourceNestedInput
 }
 
 export type SourceCreateManyInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
@@ -504,23 +497,9 @@ export type SourceUpdateOneRequiredWithoutThreadsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.SourceUpdateToOneWithWhereWithoutThreadsInput, Prisma.SourceUpdateWithoutThreadsInput>, Prisma.SourceUncheckedUpdateWithoutThreadsInput>
 }
 
-export type SourceCreateNestedOneWithoutChunksInput = {
-  create?: Prisma.XOR<Prisma.SourceCreateWithoutChunksInput, Prisma.SourceUncheckedCreateWithoutChunksInput>
-  connectOrCreate?: Prisma.SourceCreateOrConnectWithoutChunksInput
-  connect?: Prisma.SourceWhereUniqueInput
-}
-
-export type SourceUpdateOneRequiredWithoutChunksNestedInput = {
-  create?: Prisma.XOR<Prisma.SourceCreateWithoutChunksInput, Prisma.SourceUncheckedCreateWithoutChunksInput>
-  connectOrCreate?: Prisma.SourceCreateOrConnectWithoutChunksInput
-  upsert?: Prisma.SourceUpsertWithoutChunksInput
-  connect?: Prisma.SourceWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.SourceUpdateToOneWithWhereWithoutChunksInput, Prisma.SourceUpdateWithoutChunksInput>, Prisma.SourceUncheckedUpdateWithoutChunksInput>
-}
-
 export type SourceCreateWithoutTextsInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
@@ -531,12 +510,11 @@ export type SourceCreateWithoutTextsInput = {
   flashcards?: Prisma.FlashcardCreateNestedManyWithoutSourceInput
   quizzes?: Prisma.QuizCreateNestedManyWithoutSourceInput
   threads?: Prisma.ChatThreadCreateNestedManyWithoutSourceInput
-  chunks?: Prisma.ChunkCreateNestedManyWithoutSourceInput
 }
 
 export type SourceUncheckedCreateWithoutTextsInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
@@ -547,7 +525,6 @@ export type SourceUncheckedCreateWithoutTextsInput = {
   flashcards?: Prisma.FlashcardUncheckedCreateNestedManyWithoutSourceInput
   quizzes?: Prisma.QuizUncheckedCreateNestedManyWithoutSourceInput
   threads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutSourceInput
-  chunks?: Prisma.ChunkUncheckedCreateNestedManyWithoutSourceInput
 }
 
 export type SourceCreateOrConnectWithoutTextsInput = {
@@ -579,7 +556,6 @@ export type SourceUpdateWithoutTextsInput = {
   flashcards?: Prisma.FlashcardUpdateManyWithoutSourceNestedInput
   quizzes?: Prisma.QuizUpdateManyWithoutSourceNestedInput
   threads?: Prisma.ChatThreadUpdateManyWithoutSourceNestedInput
-  chunks?: Prisma.ChunkUpdateManyWithoutSourceNestedInput
 }
 
 export type SourceUncheckedUpdateWithoutTextsInput = {
@@ -595,12 +571,11 @@ export type SourceUncheckedUpdateWithoutTextsInput = {
   flashcards?: Prisma.FlashcardUncheckedUpdateManyWithoutSourceNestedInput
   quizzes?: Prisma.QuizUncheckedUpdateManyWithoutSourceNestedInput
   threads?: Prisma.ChatThreadUncheckedUpdateManyWithoutSourceNestedInput
-  chunks?: Prisma.ChunkUncheckedUpdateManyWithoutSourceNestedInput
 }
 
 export type SourceCreateWithoutNotesInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
@@ -611,12 +586,11 @@ export type SourceCreateWithoutNotesInput = {
   flashcards?: Prisma.FlashcardCreateNestedManyWithoutSourceInput
   quizzes?: Prisma.QuizCreateNestedManyWithoutSourceInput
   threads?: Prisma.ChatThreadCreateNestedManyWithoutSourceInput
-  chunks?: Prisma.ChunkCreateNestedManyWithoutSourceInput
 }
 
 export type SourceUncheckedCreateWithoutNotesInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
@@ -627,7 +601,6 @@ export type SourceUncheckedCreateWithoutNotesInput = {
   flashcards?: Prisma.FlashcardUncheckedCreateNestedManyWithoutSourceInput
   quizzes?: Prisma.QuizUncheckedCreateNestedManyWithoutSourceInput
   threads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutSourceInput
-  chunks?: Prisma.ChunkUncheckedCreateNestedManyWithoutSourceInput
 }
 
 export type SourceCreateOrConnectWithoutNotesInput = {
@@ -659,7 +632,6 @@ export type SourceUpdateWithoutNotesInput = {
   flashcards?: Prisma.FlashcardUpdateManyWithoutSourceNestedInput
   quizzes?: Prisma.QuizUpdateManyWithoutSourceNestedInput
   threads?: Prisma.ChatThreadUpdateManyWithoutSourceNestedInput
-  chunks?: Prisma.ChunkUpdateManyWithoutSourceNestedInput
 }
 
 export type SourceUncheckedUpdateWithoutNotesInput = {
@@ -675,12 +647,11 @@ export type SourceUncheckedUpdateWithoutNotesInput = {
   flashcards?: Prisma.FlashcardUncheckedUpdateManyWithoutSourceNestedInput
   quizzes?: Prisma.QuizUncheckedUpdateManyWithoutSourceNestedInput
   threads?: Prisma.ChatThreadUncheckedUpdateManyWithoutSourceNestedInput
-  chunks?: Prisma.ChunkUncheckedUpdateManyWithoutSourceNestedInput
 }
 
 export type SourceCreateWithoutFlashcardsInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
@@ -691,12 +662,11 @@ export type SourceCreateWithoutFlashcardsInput = {
   notes?: Prisma.NoteCreateNestedOneWithoutSourceInput
   quizzes?: Prisma.QuizCreateNestedManyWithoutSourceInput
   threads?: Prisma.ChatThreadCreateNestedManyWithoutSourceInput
-  chunks?: Prisma.ChunkCreateNestedManyWithoutSourceInput
 }
 
 export type SourceUncheckedCreateWithoutFlashcardsInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
@@ -707,7 +677,6 @@ export type SourceUncheckedCreateWithoutFlashcardsInput = {
   notes?: Prisma.NoteUncheckedCreateNestedOneWithoutSourceInput
   quizzes?: Prisma.QuizUncheckedCreateNestedManyWithoutSourceInput
   threads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutSourceInput
-  chunks?: Prisma.ChunkUncheckedCreateNestedManyWithoutSourceInput
 }
 
 export type SourceCreateOrConnectWithoutFlashcardsInput = {
@@ -739,7 +708,6 @@ export type SourceUpdateWithoutFlashcardsInput = {
   notes?: Prisma.NoteUpdateOneWithoutSourceNestedInput
   quizzes?: Prisma.QuizUpdateManyWithoutSourceNestedInput
   threads?: Prisma.ChatThreadUpdateManyWithoutSourceNestedInput
-  chunks?: Prisma.ChunkUpdateManyWithoutSourceNestedInput
 }
 
 export type SourceUncheckedUpdateWithoutFlashcardsInput = {
@@ -755,12 +723,11 @@ export type SourceUncheckedUpdateWithoutFlashcardsInput = {
   notes?: Prisma.NoteUncheckedUpdateOneWithoutSourceNestedInput
   quizzes?: Prisma.QuizUncheckedUpdateManyWithoutSourceNestedInput
   threads?: Prisma.ChatThreadUncheckedUpdateManyWithoutSourceNestedInput
-  chunks?: Prisma.ChunkUncheckedUpdateManyWithoutSourceNestedInput
 }
 
 export type SourceCreateWithoutQuizzesInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
@@ -771,12 +738,11 @@ export type SourceCreateWithoutQuizzesInput = {
   notes?: Prisma.NoteCreateNestedOneWithoutSourceInput
   flashcards?: Prisma.FlashcardCreateNestedManyWithoutSourceInput
   threads?: Prisma.ChatThreadCreateNestedManyWithoutSourceInput
-  chunks?: Prisma.ChunkCreateNestedManyWithoutSourceInput
 }
 
 export type SourceUncheckedCreateWithoutQuizzesInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
@@ -787,7 +753,6 @@ export type SourceUncheckedCreateWithoutQuizzesInput = {
   notes?: Prisma.NoteUncheckedCreateNestedOneWithoutSourceInput
   flashcards?: Prisma.FlashcardUncheckedCreateNestedManyWithoutSourceInput
   threads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutSourceInput
-  chunks?: Prisma.ChunkUncheckedCreateNestedManyWithoutSourceInput
 }
 
 export type SourceCreateOrConnectWithoutQuizzesInput = {
@@ -819,7 +784,6 @@ export type SourceUpdateWithoutQuizzesInput = {
   notes?: Prisma.NoteUpdateOneWithoutSourceNestedInput
   flashcards?: Prisma.FlashcardUpdateManyWithoutSourceNestedInput
   threads?: Prisma.ChatThreadUpdateManyWithoutSourceNestedInput
-  chunks?: Prisma.ChunkUpdateManyWithoutSourceNestedInput
 }
 
 export type SourceUncheckedUpdateWithoutQuizzesInput = {
@@ -835,12 +799,11 @@ export type SourceUncheckedUpdateWithoutQuizzesInput = {
   notes?: Prisma.NoteUncheckedUpdateOneWithoutSourceNestedInput
   flashcards?: Prisma.FlashcardUncheckedUpdateManyWithoutSourceNestedInput
   threads?: Prisma.ChatThreadUncheckedUpdateManyWithoutSourceNestedInput
-  chunks?: Prisma.ChunkUncheckedUpdateManyWithoutSourceNestedInput
 }
 
 export type SourceCreateWithoutThreadsInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
@@ -851,12 +814,11 @@ export type SourceCreateWithoutThreadsInput = {
   notes?: Prisma.NoteCreateNestedOneWithoutSourceInput
   flashcards?: Prisma.FlashcardCreateNestedManyWithoutSourceInput
   quizzes?: Prisma.QuizCreateNestedManyWithoutSourceInput
-  chunks?: Prisma.ChunkCreateNestedManyWithoutSourceInput
 }
 
 export type SourceUncheckedCreateWithoutThreadsInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
@@ -867,7 +829,6 @@ export type SourceUncheckedCreateWithoutThreadsInput = {
   notes?: Prisma.NoteUncheckedCreateNestedOneWithoutSourceInput
   flashcards?: Prisma.FlashcardUncheckedCreateNestedManyWithoutSourceInput
   quizzes?: Prisma.QuizUncheckedCreateNestedManyWithoutSourceInput
-  chunks?: Prisma.ChunkUncheckedCreateNestedManyWithoutSourceInput
 }
 
 export type SourceCreateOrConnectWithoutThreadsInput = {
@@ -899,7 +860,6 @@ export type SourceUpdateWithoutThreadsInput = {
   notes?: Prisma.NoteUpdateOneWithoutSourceNestedInput
   flashcards?: Prisma.FlashcardUpdateManyWithoutSourceNestedInput
   quizzes?: Prisma.QuizUpdateManyWithoutSourceNestedInput
-  chunks?: Prisma.ChunkUpdateManyWithoutSourceNestedInput
 }
 
 export type SourceUncheckedUpdateWithoutThreadsInput = {
@@ -915,87 +875,6 @@ export type SourceUncheckedUpdateWithoutThreadsInput = {
   notes?: Prisma.NoteUncheckedUpdateOneWithoutSourceNestedInput
   flashcards?: Prisma.FlashcardUncheckedUpdateManyWithoutSourceNestedInput
   quizzes?: Prisma.QuizUncheckedUpdateManyWithoutSourceNestedInput
-  chunks?: Prisma.ChunkUncheckedUpdateManyWithoutSourceNestedInput
-}
-
-export type SourceCreateWithoutChunksInput = {
-  id?: string
-  ownerId: string
-  type: $Enums.SourceType
-  title?: string | null
-  url?: string | null
-  filename?: string | null
-  sha256?: string | null
-  createdAt?: Date | string
-  texts?: Prisma.SourceTextCreateNestedManyWithoutSourceInput
-  notes?: Prisma.NoteCreateNestedOneWithoutSourceInput
-  flashcards?: Prisma.FlashcardCreateNestedManyWithoutSourceInput
-  quizzes?: Prisma.QuizCreateNestedManyWithoutSourceInput
-  threads?: Prisma.ChatThreadCreateNestedManyWithoutSourceInput
-}
-
-export type SourceUncheckedCreateWithoutChunksInput = {
-  id?: string
-  ownerId: string
-  type: $Enums.SourceType
-  title?: string | null
-  url?: string | null
-  filename?: string | null
-  sha256?: string | null
-  createdAt?: Date | string
-  texts?: Prisma.SourceTextUncheckedCreateNestedManyWithoutSourceInput
-  notes?: Prisma.NoteUncheckedCreateNestedOneWithoutSourceInput
-  flashcards?: Prisma.FlashcardUncheckedCreateNestedManyWithoutSourceInput
-  quizzes?: Prisma.QuizUncheckedCreateNestedManyWithoutSourceInput
-  threads?: Prisma.ChatThreadUncheckedCreateNestedManyWithoutSourceInput
-}
-
-export type SourceCreateOrConnectWithoutChunksInput = {
-  where: Prisma.SourceWhereUniqueInput
-  create: Prisma.XOR<Prisma.SourceCreateWithoutChunksInput, Prisma.SourceUncheckedCreateWithoutChunksInput>
-}
-
-export type SourceUpsertWithoutChunksInput = {
-  update: Prisma.XOR<Prisma.SourceUpdateWithoutChunksInput, Prisma.SourceUncheckedUpdateWithoutChunksInput>
-  create: Prisma.XOR<Prisma.SourceCreateWithoutChunksInput, Prisma.SourceUncheckedCreateWithoutChunksInput>
-  where?: Prisma.SourceWhereInput
-}
-
-export type SourceUpdateToOneWithWhereWithoutChunksInput = {
-  where?: Prisma.SourceWhereInput
-  data: Prisma.XOR<Prisma.SourceUpdateWithoutChunksInput, Prisma.SourceUncheckedUpdateWithoutChunksInput>
-}
-
-export type SourceUpdateWithoutChunksInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  texts?: Prisma.SourceTextUpdateManyWithoutSourceNestedInput
-  notes?: Prisma.NoteUpdateOneWithoutSourceNestedInput
-  flashcards?: Prisma.FlashcardUpdateManyWithoutSourceNestedInput
-  quizzes?: Prisma.QuizUpdateManyWithoutSourceNestedInput
-  threads?: Prisma.ChatThreadUpdateManyWithoutSourceNestedInput
-}
-
-export type SourceUncheckedUpdateWithoutChunksInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  texts?: Prisma.SourceTextUncheckedUpdateManyWithoutSourceNestedInput
-  notes?: Prisma.NoteUncheckedUpdateOneWithoutSourceNestedInput
-  flashcards?: Prisma.FlashcardUncheckedUpdateManyWithoutSourceNestedInput
-  quizzes?: Prisma.QuizUncheckedUpdateManyWithoutSourceNestedInput
-  threads?: Prisma.ChatThreadUncheckedUpdateManyWithoutSourceNestedInput
 }
 
 
@@ -1008,7 +887,6 @@ export type SourceCountOutputType = {
   flashcards: number
   quizzes: number
   threads: number
-  chunks: number
 }
 
 export type SourceCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1016,7 +894,6 @@ export type SourceCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   flashcards?: boolean | SourceCountOutputTypeCountFlashcardsArgs
   quizzes?: boolean | SourceCountOutputTypeCountQuizzesArgs
   threads?: boolean | SourceCountOutputTypeCountThreadsArgs
-  chunks?: boolean | SourceCountOutputTypeCountChunksArgs
 }
 
 /**
@@ -1057,13 +934,6 @@ export type SourceCountOutputTypeCountThreadsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.ChatThreadWhereInput
 }
 
-/**
- * SourceCountOutputType without action
- */
-export type SourceCountOutputTypeCountChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ChunkWhereInput
-}
-
 
 export type SourceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1079,7 +949,6 @@ export type SourceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   flashcards?: boolean | Prisma.Source$flashcardsArgs<ExtArgs>
   quizzes?: boolean | Prisma.Source$quizzesArgs<ExtArgs>
   threads?: boolean | Prisma.Source$threadsArgs<ExtArgs>
-  chunks?: boolean | Prisma.Source$chunksArgs<ExtArgs>
   _count?: boolean | Prisma.SourceCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["source"]>
 
@@ -1123,7 +992,6 @@ export type SourceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   flashcards?: boolean | Prisma.Source$flashcardsArgs<ExtArgs>
   quizzes?: boolean | Prisma.Source$quizzesArgs<ExtArgs>
   threads?: boolean | Prisma.Source$threadsArgs<ExtArgs>
-  chunks?: boolean | Prisma.Source$chunksArgs<ExtArgs>
   _count?: boolean | Prisma.SourceCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SourceIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1137,7 +1005,6 @@ export type $SourcePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     flashcards: Prisma.$FlashcardPayload<ExtArgs>[]
     quizzes: Prisma.$QuizPayload<ExtArgs>[]
     threads: Prisma.$ChatThreadPayload<ExtArgs>[]
-    chunks: Prisma.$ChunkPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1547,7 +1414,6 @@ export interface Prisma__SourceClient<T, Null = never, ExtArgs extends runtime.T
   flashcards<T extends Prisma.Source$flashcardsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Source$flashcardsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FlashcardPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   quizzes<T extends Prisma.Source$quizzesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Source$quizzesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuizPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   threads<T extends Prisma.Source$threadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Source$threadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatThreadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  chunks<T extends Prisma.Source$chunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Source$chunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2085,30 +1951,6 @@ export type Source$threadsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.ChatThreadScalarFieldEnum | Prisma.ChatThreadScalarFieldEnum[]
-}
-
-/**
- * Source.chunks
- */
-export type Source$chunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Chunk
-   */
-  select?: Prisma.ChunkSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Chunk
-   */
-  omit?: Prisma.ChunkOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ChunkInclude<ExtArgs> | null
-  where?: Prisma.ChunkWhereInput
-  orderBy?: Prisma.ChunkOrderByWithRelationInput | Prisma.ChunkOrderByWithRelationInput[]
-  cursor?: Prisma.ChunkWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ChunkScalarFieldEnum | Prisma.ChunkScalarFieldEnum[]
 }
 
 /**

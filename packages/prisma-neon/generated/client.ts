@@ -84,3 +84,8 @@ export type ChatMessage = Prisma.ChatMessageModel
  * 
  */
 export type Chunk = Prisma.ChunkModel
+/**
+ * Model Job
+ * 
+ */
+export type Job = Prisma.JobModel

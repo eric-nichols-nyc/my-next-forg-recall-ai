@@ -192,7 +192,7 @@ export type FlashcardWhereInput = {
   OR?: Prisma.FlashcardWhereInput[]
   NOT?: Prisma.FlashcardWhereInput | Prisma.FlashcardWhereInput[]
   id?: Prisma.UuidFilter<"Flashcard"> | string
-  ownerId?: Prisma.StringFilter<"Flashcard"> | string
+  ownerId?: Prisma.UuidFilter<"Flashcard"> | string
   sourceId?: Prisma.UuidFilter<"Flashcard"> | string
   front?: Prisma.StringFilter<"Flashcard"> | string
   back?: Prisma.StringFilter<"Flashcard"> | string
@@ -219,7 +219,7 @@ export type FlashcardWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.FlashcardWhereInput | Prisma.FlashcardWhereInput[]
   OR?: Prisma.FlashcardWhereInput[]
   NOT?: Prisma.FlashcardWhereInput | Prisma.FlashcardWhereInput[]
-  ownerId?: Prisma.StringFilter<"Flashcard"> | string
+  ownerId?: Prisma.UuidFilter<"Flashcard"> | string
   sourceId?: Prisma.UuidFilter<"Flashcard"> | string
   front?: Prisma.StringFilter<"Flashcard"> | string
   back?: Prisma.StringFilter<"Flashcard"> | string
@@ -247,7 +247,7 @@ export type FlashcardScalarWhereWithAggregatesInput = {
   OR?: Prisma.FlashcardScalarWhereWithAggregatesInput[]
   NOT?: Prisma.FlashcardScalarWhereWithAggregatesInput | Prisma.FlashcardScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"Flashcard"> | string
-  ownerId?: Prisma.StringWithAggregatesFilter<"Flashcard"> | string
+  ownerId?: Prisma.UuidWithAggregatesFilter<"Flashcard"> | string
   sourceId?: Prisma.UuidWithAggregatesFilter<"Flashcard"> | string
   front?: Prisma.StringWithAggregatesFilter<"Flashcard"> | string
   back?: Prisma.StringWithAggregatesFilter<"Flashcard"> | string
@@ -257,7 +257,7 @@ export type FlashcardScalarWhereWithAggregatesInput = {
 
 export type FlashcardCreateInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   front: string
   back: string
   createdAt?: Date | string
@@ -267,7 +267,7 @@ export type FlashcardCreateInput = {
 
 export type FlashcardUncheckedCreateInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   sourceId: string
   front: string
   back: string
@@ -297,7 +297,7 @@ export type FlashcardUncheckedUpdateInput = {
 
 export type FlashcardCreateManyInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   sourceId: string
   front: string
   back: string
@@ -449,7 +449,7 @@ export type FlashcardUncheckedUpdateManyWithoutSourceTextNestedInput = {
 
 export type FlashcardCreateWithoutSourceInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   front: string
   back: string
   createdAt?: Date | string
@@ -458,7 +458,7 @@ export type FlashcardCreateWithoutSourceInput = {
 
 export type FlashcardUncheckedCreateWithoutSourceInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   front: string
   back: string
   sourceTextId?: string | null
@@ -496,7 +496,7 @@ export type FlashcardScalarWhereInput = {
   OR?: Prisma.FlashcardScalarWhereInput[]
   NOT?: Prisma.FlashcardScalarWhereInput | Prisma.FlashcardScalarWhereInput[]
   id?: Prisma.UuidFilter<"Flashcard"> | string
-  ownerId?: Prisma.StringFilter<"Flashcard"> | string
+  ownerId?: Prisma.UuidFilter<"Flashcard"> | string
   sourceId?: Prisma.UuidFilter<"Flashcard"> | string
   front?: Prisma.StringFilter<"Flashcard"> | string
   back?: Prisma.StringFilter<"Flashcard"> | string
@@ -506,7 +506,7 @@ export type FlashcardScalarWhereInput = {
 
 export type FlashcardCreateWithoutSourceTextInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   front: string
   back: string
   createdAt?: Date | string
@@ -515,7 +515,7 @@ export type FlashcardCreateWithoutSourceTextInput = {
 
 export type FlashcardUncheckedCreateWithoutSourceTextInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   sourceId: string
   front: string
   back: string
@@ -550,7 +550,7 @@ export type FlashcardUpdateManyWithWhereWithoutSourceTextInput = {
 
 export type FlashcardCreateManySourceInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   front: string
   back: string
   sourceTextId?: string | null
@@ -586,7 +586,7 @@ export type FlashcardUncheckedUpdateManyWithoutSourceInput = {
 
 export type FlashcardCreateManySourceTextInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   sourceId: string
   front: string
   back: string

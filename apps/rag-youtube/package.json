@@ -29,6 +29,7 @@
     "@repo/design-system": "workspace:*",
     "@repo/neon-auth": "workspace:*",
     "@repo/prisma-neon": "workspace:*",
+    "@t3-oss/env-nextjs": "^0.13.8",
     "ai": "^5.0.93",
     "axios": "^1.13.2",
     "langchain": "^1.2.3",

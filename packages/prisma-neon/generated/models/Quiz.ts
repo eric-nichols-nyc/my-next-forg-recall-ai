@@ -178,7 +178,7 @@ export type QuizWhereInput = {
   OR?: Prisma.QuizWhereInput[]
   NOT?: Prisma.QuizWhereInput | Prisma.QuizWhereInput[]
   id?: Prisma.UuidFilter<"Quiz"> | string
-  ownerId?: Prisma.StringFilter<"Quiz"> | string
+  ownerId?: Prisma.UuidFilter<"Quiz"> | string
   sourceId?: Prisma.UuidFilter<"Quiz"> | string
   title?: Prisma.StringFilter<"Quiz"> | string
   createdAt?: Prisma.DateTimeFilter<"Quiz"> | Date | string
@@ -201,7 +201,7 @@ export type QuizWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.QuizWhereInput | Prisma.QuizWhereInput[]
   OR?: Prisma.QuizWhereInput[]
   NOT?: Prisma.QuizWhereInput | Prisma.QuizWhereInput[]
-  ownerId?: Prisma.StringFilter<"Quiz"> | string
+  ownerId?: Prisma.UuidFilter<"Quiz"> | string
   sourceId?: Prisma.UuidFilter<"Quiz"> | string
   title?: Prisma.StringFilter<"Quiz"> | string
   createdAt?: Prisma.DateTimeFilter<"Quiz"> | Date | string
@@ -225,7 +225,7 @@ export type QuizScalarWhereWithAggregatesInput = {
   OR?: Prisma.QuizScalarWhereWithAggregatesInput[]
   NOT?: Prisma.QuizScalarWhereWithAggregatesInput | Prisma.QuizScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"Quiz"> | string
-  ownerId?: Prisma.StringWithAggregatesFilter<"Quiz"> | string
+  ownerId?: Prisma.UuidWithAggregatesFilter<"Quiz"> | string
   sourceId?: Prisma.UuidWithAggregatesFilter<"Quiz"> | string
   title?: Prisma.StringWithAggregatesFilter<"Quiz"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Quiz"> | Date | string
@@ -233,7 +233,7 @@ export type QuizScalarWhereWithAggregatesInput = {
 
 export type QuizCreateInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   title: string
   createdAt?: Date | string
   source: Prisma.SourceCreateNestedOneWithoutQuizzesInput
@@ -242,7 +242,7 @@ export type QuizCreateInput = {
 
 export type QuizUncheckedCreateInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   sourceId: string
   title: string
   createdAt?: Date | string
@@ -269,7 +269,7 @@ export type QuizUncheckedUpdateInput = {
 
 export type QuizCreateManyInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   sourceId: string
   title: string
   createdAt?: Date | string
@@ -387,7 +387,7 @@ export type QuizUpdateOneRequiredWithoutQuestionsNestedInput = {
 
 export type QuizCreateWithoutSourceInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   title: string
   createdAt?: Date | string
   questions?: Prisma.QuizQuestionCreateNestedManyWithoutQuizInput
@@ -395,7 +395,7 @@ export type QuizCreateWithoutSourceInput = {
 
 export type QuizUncheckedCreateWithoutSourceInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   title: string
   createdAt?: Date | string
   questions?: Prisma.QuizQuestionUncheckedCreateNestedManyWithoutQuizInput
@@ -432,7 +432,7 @@ export type QuizScalarWhereInput = {
   OR?: Prisma.QuizScalarWhereInput[]
   NOT?: Prisma.QuizScalarWhereInput | Prisma.QuizScalarWhereInput[]
   id?: Prisma.UuidFilter<"Quiz"> | string
-  ownerId?: Prisma.StringFilter<"Quiz"> | string
+  ownerId?: Prisma.UuidFilter<"Quiz"> | string
   sourceId?: Prisma.UuidFilter<"Quiz"> | string
   title?: Prisma.StringFilter<"Quiz"> | string
   createdAt?: Prisma.DateTimeFilter<"Quiz"> | Date | string
@@ -440,7 +440,7 @@ export type QuizScalarWhereInput = {
 
 export type QuizCreateWithoutQuestionsInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   title: string
   createdAt?: Date | string
   source: Prisma.SourceCreateNestedOneWithoutQuizzesInput
@@ -448,7 +448,7 @@ export type QuizCreateWithoutQuestionsInput = {
 
 export type QuizUncheckedCreateWithoutQuestionsInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   sourceId: string
   title: string
   createdAt?: Date | string
@@ -488,7 +488,7 @@ export type QuizUncheckedUpdateWithoutQuestionsInput = {
 
 export type QuizCreateManySourceInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   title: string
   createdAt?: Date | string
 }

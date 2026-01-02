@@ -28,30 +28,30 @@ export type NoteMinAggregateOutputType = {
   id: string | null
   ownerId: string | null
   sourceId: string | null
-  title: string | null
   model: string | null
   summaryMd: string | null
   createdAt: Date | null
+  title: string | null
 }
 
 export type NoteMaxAggregateOutputType = {
   id: string | null
   ownerId: string | null
   sourceId: string | null
-  title: string | null
   model: string | null
   summaryMd: string | null
   createdAt: Date | null
+  title: string | null
 }
 
 export type NoteCountAggregateOutputType = {
   id: number
   ownerId: number
   sourceId: number
-  title: number
   model: number
   summaryMd: number
   createdAt: number
+  title: number
   _all: number
 }
 
@@ -60,30 +60,30 @@ export type NoteMinAggregateInputType = {
   id?: true
   ownerId?: true
   sourceId?: true
-  title?: true
   model?: true
   summaryMd?: true
   createdAt?: true
+  title?: true
 }
 
 export type NoteMaxAggregateInputType = {
   id?: true
   ownerId?: true
   sourceId?: true
-  title?: true
   model?: true
   summaryMd?: true
   createdAt?: true
+  title?: true
 }
 
 export type NoteCountAggregateInputType = {
   id?: true
   ownerId?: true
   sourceId?: true
-  title?: true
   model?: true
   summaryMd?: true
   createdAt?: true
+  title?: true
   _all?: true
 }
 
@@ -163,10 +163,10 @@ export type NoteGroupByOutputType = {
   id: string
   ownerId: string
   sourceId: string
-  title: string | null
   model: string | null
   summaryMd: string
   createdAt: Date
+  title: string | null
   _count: NoteCountAggregateOutputType | null
   _min: NoteMinAggregateOutputType | null
   _max: NoteMaxAggregateOutputType | null
@@ -192,12 +192,12 @@ export type NoteWhereInput = {
   OR?: Prisma.NoteWhereInput[]
   NOT?: Prisma.NoteWhereInput | Prisma.NoteWhereInput[]
   id?: Prisma.UuidFilter<"Note"> | string
-  ownerId?: Prisma.StringFilter<"Note"> | string
+  ownerId?: Prisma.UuidFilter<"Note"> | string
   sourceId?: Prisma.UuidFilter<"Note"> | string
-  title?: Prisma.StringNullableFilter<"Note"> | string | null
   model?: Prisma.StringNullableFilter<"Note"> | string | null
   summaryMd?: Prisma.StringFilter<"Note"> | string
   createdAt?: Prisma.DateTimeFilter<"Note"> | Date | string
+  title?: Prisma.StringNullableFilter<"Note"> | string | null
   source?: Prisma.XOR<Prisma.SourceScalarRelationFilter, Prisma.SourceWhereInput>
 }
 
@@ -205,10 +205,10 @@ export type NoteOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   sourceId?: Prisma.SortOrder
-  title?: Prisma.SortOrderInput | Prisma.SortOrder
   model?: Prisma.SortOrderInput | Prisma.SortOrder
   summaryMd?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  title?: Prisma.SortOrderInput | Prisma.SortOrder
   source?: Prisma.SourceOrderByWithRelationInput
 }
 
@@ -218,11 +218,11 @@ export type NoteWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.NoteWhereInput | Prisma.NoteWhereInput[]
   OR?: Prisma.NoteWhereInput[]
   NOT?: Prisma.NoteWhereInput | Prisma.NoteWhereInput[]
-  ownerId?: Prisma.StringFilter<"Note"> | string
-  title?: Prisma.StringNullableFilter<"Note"> | string | null
+  ownerId?: Prisma.UuidFilter<"Note"> | string
   model?: Prisma.StringNullableFilter<"Note"> | string | null
   summaryMd?: Prisma.StringFilter<"Note"> | string
   createdAt?: Prisma.DateTimeFilter<"Note"> | Date | string
+  title?: Prisma.StringNullableFilter<"Note"> | string | null
   source?: Prisma.XOR<Prisma.SourceScalarRelationFilter, Prisma.SourceWhereInput>
 }, "id" | "sourceId">
 
@@ -230,10 +230,10 @@ export type NoteOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   sourceId?: Prisma.SortOrder
-  title?: Prisma.SortOrderInput | Prisma.SortOrder
   model?: Prisma.SortOrderInput | Prisma.SortOrder
   summaryMd?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  title?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.NoteCountOrderByAggregateInput
   _max?: Prisma.NoteMaxOrderByAggregateInput
   _min?: Prisma.NoteMinOrderByAggregateInput
@@ -244,41 +244,41 @@ export type NoteScalarWhereWithAggregatesInput = {
   OR?: Prisma.NoteScalarWhereWithAggregatesInput[]
   NOT?: Prisma.NoteScalarWhereWithAggregatesInput | Prisma.NoteScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"Note"> | string
-  ownerId?: Prisma.StringWithAggregatesFilter<"Note"> | string
+  ownerId?: Prisma.UuidWithAggregatesFilter<"Note"> | string
   sourceId?: Prisma.UuidWithAggregatesFilter<"Note"> | string
-  title?: Prisma.StringNullableWithAggregatesFilter<"Note"> | string | null
   model?: Prisma.StringNullableWithAggregatesFilter<"Note"> | string | null
   summaryMd?: Prisma.StringWithAggregatesFilter<"Note"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Note"> | Date | string
+  title?: Prisma.StringNullableWithAggregatesFilter<"Note"> | string | null
 }
 
 export type NoteCreateInput = {
   id?: string
-  ownerId: string
-  title?: string | null
+  ownerId?: string
   model?: string | null
   summaryMd: string
   createdAt?: Date | string
+  title?: string | null
   source: Prisma.SourceCreateNestedOneWithoutNotesInput
 }
 
 export type NoteUncheckedCreateInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   sourceId: string
-  title?: string | null
   model?: string | null
   summaryMd: string
   createdAt?: Date | string
+  title?: string | null
 }
 
 export type NoteUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   summaryMd?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.SourceUpdateOneRequiredWithoutNotesNestedInput
 }
 
@@ -286,39 +286,39 @@ export type NoteUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   sourceId?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   summaryMd?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type NoteCreateManyInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   sourceId: string
-  title?: string | null
   model?: string | null
   summaryMd: string
   createdAt?: Date | string
+  title?: string | null
 }
 
 export type NoteUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   summaryMd?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type NoteUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   sourceId?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   summaryMd?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type NoteNullableScalarRelationFilter = {
@@ -330,30 +330,30 @@ export type NoteCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   sourceId?: Prisma.SortOrder
-  title?: Prisma.SortOrder
   model?: Prisma.SortOrder
   summaryMd?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  title?: Prisma.SortOrder
 }
 
 export type NoteMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   sourceId?: Prisma.SortOrder
-  title?: Prisma.SortOrder
   model?: Prisma.SortOrder
   summaryMd?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  title?: Prisma.SortOrder
 }
 
 export type NoteMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   sourceId?: Prisma.SortOrder
-  title?: Prisma.SortOrder
   model?: Prisma.SortOrder
   summaryMd?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  title?: Prisma.SortOrder
 }
 
 export type NoteCreateNestedOneWithoutSourceInput = {
@@ -390,20 +390,20 @@ export type NoteUncheckedUpdateOneWithoutSourceNestedInput = {
 
 export type NoteCreateWithoutSourceInput = {
   id?: string
-  ownerId: string
-  title?: string | null
+  ownerId?: string
   model?: string | null
   summaryMd: string
   createdAt?: Date | string
+  title?: string | null
 }
 
 export type NoteUncheckedCreateWithoutSourceInput = {
   id?: string
-  ownerId: string
-  title?: string | null
+  ownerId?: string
   model?: string | null
   summaryMd: string
   createdAt?: Date | string
+  title?: string | null
 }
 
 export type NoteCreateOrConnectWithoutSourceInput = {
@@ -425,19 +425,19 @@ export type NoteUpdateToOneWithWhereWithoutSourceInput = {
 export type NoteUpdateWithoutSourceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   summaryMd?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type NoteUncheckedUpdateWithoutSourceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   summaryMd?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -446,10 +446,10 @@ export type NoteSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   id?: boolean
   ownerId?: boolean
   sourceId?: boolean
-  title?: boolean
   model?: boolean
   summaryMd?: boolean
   createdAt?: boolean
+  title?: boolean
   source?: boolean | Prisma.SourceDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["note"]>
 
@@ -457,10 +457,10 @@ export type NoteSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   ownerId?: boolean
   sourceId?: boolean
-  title?: boolean
   model?: boolean
   summaryMd?: boolean
   createdAt?: boolean
+  title?: boolean
   source?: boolean | Prisma.SourceDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["note"]>
 
@@ -468,10 +468,10 @@ export type NoteSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   ownerId?: boolean
   sourceId?: boolean
-  title?: boolean
   model?: boolean
   summaryMd?: boolean
   createdAt?: boolean
+  title?: boolean
   source?: boolean | Prisma.SourceDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["note"]>
 
@@ -479,13 +479,13 @@ export type NoteSelectScalar = {
   id?: boolean
   ownerId?: boolean
   sourceId?: boolean
-  title?: boolean
   model?: boolean
   summaryMd?: boolean
   createdAt?: boolean
+  title?: boolean
 }
 
-export type NoteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ownerId" | "sourceId" | "title" | "model" | "summaryMd" | "createdAt", ExtArgs["result"]["note"]>
+export type NoteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ownerId" | "sourceId" | "model" | "summaryMd" | "createdAt" | "title", ExtArgs["result"]["note"]>
 export type NoteInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   source?: boolean | Prisma.SourceDefaultArgs<ExtArgs>
 }
@@ -505,10 +505,10 @@ export type $NotePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     id: string
     ownerId: string
     sourceId: string
-    title: string | null
     model: string | null
     summaryMd: string
     createdAt: Date
+    title: string | null
   }, ExtArgs["result"]["note"]>
   composites: {}
 }
@@ -936,10 +936,10 @@ export interface NoteFieldRefs {
   readonly id: Prisma.FieldRef<"Note", 'String'>
   readonly ownerId: Prisma.FieldRef<"Note", 'String'>
   readonly sourceId: Prisma.FieldRef<"Note", 'String'>
-  readonly title: Prisma.FieldRef<"Note", 'String'>
   readonly model: Prisma.FieldRef<"Note", 'String'>
   readonly summaryMd: Prisma.FieldRef<"Note", 'String'>
   readonly createdAt: Prisma.FieldRef<"Note", 'DateTime'>
+  readonly title: Prisma.FieldRef<"Note", 'String'>
 }
     
 

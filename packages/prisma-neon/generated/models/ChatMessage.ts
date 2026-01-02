@@ -188,7 +188,7 @@ export type ChatMessageWhereInput = {
   OR?: Prisma.ChatMessageWhereInput[]
   NOT?: Prisma.ChatMessageWhereInput | Prisma.ChatMessageWhereInput[]
   id?: Prisma.UuidFilter<"ChatMessage"> | string
-  ownerId?: Prisma.StringFilter<"ChatMessage"> | string
+  ownerId?: Prisma.UuidFilter<"ChatMessage"> | string
   threadId?: Prisma.UuidFilter<"ChatMessage"> | string
   role?: Prisma.EnumChatRoleFilter<"ChatMessage"> | $Enums.ChatRole
   content?: Prisma.StringFilter<"ChatMessage"> | string
@@ -213,7 +213,7 @@ export type ChatMessageWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.ChatMessageWhereInput | Prisma.ChatMessageWhereInput[]
   OR?: Prisma.ChatMessageWhereInput[]
   NOT?: Prisma.ChatMessageWhereInput | Prisma.ChatMessageWhereInput[]
-  ownerId?: Prisma.StringFilter<"ChatMessage"> | string
+  ownerId?: Prisma.UuidFilter<"ChatMessage"> | string
   threadId?: Prisma.UuidFilter<"ChatMessage"> | string
   role?: Prisma.EnumChatRoleFilter<"ChatMessage"> | $Enums.ChatRole
   content?: Prisma.StringFilter<"ChatMessage"> | string
@@ -240,7 +240,7 @@ export type ChatMessageScalarWhereWithAggregatesInput = {
   OR?: Prisma.ChatMessageScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ChatMessageScalarWhereWithAggregatesInput | Prisma.ChatMessageScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"ChatMessage"> | string
-  ownerId?: Prisma.StringWithAggregatesFilter<"ChatMessage"> | string
+  ownerId?: Prisma.UuidWithAggregatesFilter<"ChatMessage"> | string
   threadId?: Prisma.UuidWithAggregatesFilter<"ChatMessage"> | string
   role?: Prisma.EnumChatRoleWithAggregatesFilter<"ChatMessage"> | $Enums.ChatRole
   content?: Prisma.StringWithAggregatesFilter<"ChatMessage"> | string
@@ -250,7 +250,7 @@ export type ChatMessageScalarWhereWithAggregatesInput = {
 
 export type ChatMessageCreateInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   role: $Enums.ChatRole
   content: string
   citations?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -260,7 +260,7 @@ export type ChatMessageCreateInput = {
 
 export type ChatMessageUncheckedCreateInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   threadId: string
   role: $Enums.ChatRole
   content: string
@@ -290,7 +290,7 @@ export type ChatMessageUncheckedUpdateInput = {
 
 export type ChatMessageCreateManyInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   threadId: string
   role: $Enums.ChatRole
   content: string
@@ -403,7 +403,7 @@ export type EnumChatRoleFieldUpdateOperationsInput = {
 
 export type ChatMessageCreateWithoutThreadInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   role: $Enums.ChatRole
   content: string
   citations?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -412,7 +412,7 @@ export type ChatMessageCreateWithoutThreadInput = {
 
 export type ChatMessageUncheckedCreateWithoutThreadInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   role: $Enums.ChatRole
   content: string
   citations?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -450,7 +450,7 @@ export type ChatMessageScalarWhereInput = {
   OR?: Prisma.ChatMessageScalarWhereInput[]
   NOT?: Prisma.ChatMessageScalarWhereInput | Prisma.ChatMessageScalarWhereInput[]
   id?: Prisma.UuidFilter<"ChatMessage"> | string
-  ownerId?: Prisma.StringFilter<"ChatMessage"> | string
+  ownerId?: Prisma.UuidFilter<"ChatMessage"> | string
   threadId?: Prisma.UuidFilter<"ChatMessage"> | string
   role?: Prisma.EnumChatRoleFilter<"ChatMessage"> | $Enums.ChatRole
   content?: Prisma.StringFilter<"ChatMessage"> | string
@@ -460,7 +460,7 @@ export type ChatMessageScalarWhereInput = {
 
 export type ChatMessageCreateManyThreadInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   role: $Enums.ChatRole
   content: string
   citations?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue

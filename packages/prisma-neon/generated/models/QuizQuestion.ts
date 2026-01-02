@@ -229,7 +229,7 @@ export type QuizQuestionWhereInput = {
   OR?: Prisma.QuizQuestionWhereInput[]
   NOT?: Prisma.QuizQuestionWhereInput | Prisma.QuizQuestionWhereInput[]
   id?: Prisma.UuidFilter<"QuizQuestion"> | string
-  ownerId?: Prisma.StringFilter<"QuizQuestion"> | string
+  ownerId?: Prisma.UuidFilter<"QuizQuestion"> | string
   quizId?: Prisma.UuidFilter<"QuizQuestion"> | string
   prompt?: Prisma.StringFilter<"QuizQuestion"> | string
   choices?: Prisma.JsonFilter<"QuizQuestion">
@@ -258,7 +258,7 @@ export type QuizQuestionWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.QuizQuestionWhereInput | Prisma.QuizQuestionWhereInput[]
   OR?: Prisma.QuizQuestionWhereInput[]
   NOT?: Prisma.QuizQuestionWhereInput | Prisma.QuizQuestionWhereInput[]
-  ownerId?: Prisma.StringFilter<"QuizQuestion"> | string
+  ownerId?: Prisma.UuidFilter<"QuizQuestion"> | string
   quizId?: Prisma.UuidFilter<"QuizQuestion"> | string
   prompt?: Prisma.StringFilter<"QuizQuestion"> | string
   choices?: Prisma.JsonFilter<"QuizQuestion">
@@ -290,7 +290,7 @@ export type QuizQuestionScalarWhereWithAggregatesInput = {
   OR?: Prisma.QuizQuestionScalarWhereWithAggregatesInput[]
   NOT?: Prisma.QuizQuestionScalarWhereWithAggregatesInput | Prisma.QuizQuestionScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"QuizQuestion"> | string
-  ownerId?: Prisma.StringWithAggregatesFilter<"QuizQuestion"> | string
+  ownerId?: Prisma.UuidWithAggregatesFilter<"QuizQuestion"> | string
   quizId?: Prisma.UuidWithAggregatesFilter<"QuizQuestion"> | string
   prompt?: Prisma.StringWithAggregatesFilter<"QuizQuestion"> | string
   choices?: Prisma.JsonWithAggregatesFilter<"QuizQuestion">
@@ -301,7 +301,7 @@ export type QuizQuestionScalarWhereWithAggregatesInput = {
 
 export type QuizQuestionCreateInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   prompt: string
   choices: Prisma.JsonNullValueInput | runtime.InputJsonValue
   correctIndex: number
@@ -312,7 +312,7 @@ export type QuizQuestionCreateInput = {
 
 export type QuizQuestionUncheckedCreateInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   quizId: string
   prompt: string
   choices: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -345,7 +345,7 @@ export type QuizQuestionUncheckedUpdateInput = {
 
 export type QuizQuestionCreateManyInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   quizId: string
   prompt: string
   choices: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -509,7 +509,7 @@ export type QuizQuestionUncheckedUpdateManyWithoutQuizNestedInput = {
 
 export type QuizQuestionCreateWithoutSourceTextInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   prompt: string
   choices: Prisma.JsonNullValueInput | runtime.InputJsonValue
   correctIndex: number
@@ -519,7 +519,7 @@ export type QuizQuestionCreateWithoutSourceTextInput = {
 
 export type QuizQuestionUncheckedCreateWithoutSourceTextInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   quizId: string
   prompt: string
   choices: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -558,7 +558,7 @@ export type QuizQuestionScalarWhereInput = {
   OR?: Prisma.QuizQuestionScalarWhereInput[]
   NOT?: Prisma.QuizQuestionScalarWhereInput | Prisma.QuizQuestionScalarWhereInput[]
   id?: Prisma.UuidFilter<"QuizQuestion"> | string
-  ownerId?: Prisma.StringFilter<"QuizQuestion"> | string
+  ownerId?: Prisma.UuidFilter<"QuizQuestion"> | string
   quizId?: Prisma.UuidFilter<"QuizQuestion"> | string
   prompt?: Prisma.StringFilter<"QuizQuestion"> | string
   choices?: Prisma.JsonFilter<"QuizQuestion">
@@ -569,7 +569,7 @@ export type QuizQuestionScalarWhereInput = {
 
 export type QuizQuestionCreateWithoutQuizInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   prompt: string
   choices: Prisma.JsonNullValueInput | runtime.InputJsonValue
   correctIndex: number
@@ -579,7 +579,7 @@ export type QuizQuestionCreateWithoutQuizInput = {
 
 export type QuizQuestionUncheckedCreateWithoutQuizInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   prompt: string
   choices: Prisma.JsonNullValueInput | runtime.InputJsonValue
   correctIndex: number
@@ -615,7 +615,7 @@ export type QuizQuestionUpdateManyWithWhereWithoutQuizInput = {
 
 export type QuizQuestionCreateManySourceTextInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   quizId: string
   prompt: string
   choices: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -655,7 +655,7 @@ export type QuizQuestionUncheckedUpdateManyWithoutSourceTextInput = {
 
 export type QuizQuestionCreateManyQuizInput = {
   id?: string
-  ownerId: string
+  ownerId?: string
   prompt: string
   choices: Prisma.JsonNullValueInput | runtime.InputJsonValue
   correctIndex: number
