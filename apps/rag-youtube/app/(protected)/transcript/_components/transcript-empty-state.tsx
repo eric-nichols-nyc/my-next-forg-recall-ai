@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Card,
   CardContent,
@@ -8,13 +7,16 @@ import {
   CardTitle,
 } from "@repo/design-system/components/ui/card";
 import { VideoIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { YouTubeActionsForm } from "./youtube-actions-form";
 
 export function TranscriptEmptyState() {
-  const handleSuccess = (sourceId: string) => {
-    console.log("sourceId. =", sourceId);
+  const router = useRouter();
+
+  const handleSuccess = (noteId: string) => {
+    console.log("noteId =", noteId);
     // Navigate to the note page when transcript is ready
-    //router.push(`/notes/${sourceId}`);
+    router.push(`/transcript/${noteId}`);
   };
 
   return (
