@@ -219,7 +219,7 @@ async function getPdfText(file: File): Promise<string> {
 
     // Parse the PDF using pdf2json
     // Wrap the event-based API in a Promise
-    return new Promise<string>((resolve, reject) => {
+    const result = await new Promise<string>((resolve, reject) => {
       // The reason we bypass type checks is because
       // the default type definitions for pdf2json in the npm install
       // do not allow for any constructor arguments.
@@ -257,8 +257,10 @@ async function getPdfText(file: File): Promise<string> {
 
       pdfParser.loadPDF(tempFilePath);
     });
+
+    return result;
   } finally {
-    // Clean up the temporary file
+    // Clean up the temporary file after the Promise resolves/rejects
     try {
       await fs.unlink(tempFilePath);
     } catch {

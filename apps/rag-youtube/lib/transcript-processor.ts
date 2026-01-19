@@ -192,13 +192,19 @@ export async function processTranscript({
   await database.chunk.deleteMany({ where: { sourceId } });
 
   // Create chunks in database
+  // Include sourceId in metadata so PGVector can filter by it
   const chunkRows = await database.chunk.createMany({
     data: chunks.map((c) => ({
       ownerId,
       sourceId,
       chunkIndex: c.chunkIndex,
       text: c.text,
-      metadata: c.metadata,
+      metadata: {
+        ...c.metadata,
+        sourceId,
+        sourceType: _sourceType,
+        url: _url,
+      },
     })),
     skipDuplicates: true,
   });

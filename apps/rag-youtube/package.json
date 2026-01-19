@@ -1,8 +1,8 @@
 {
-  "name": "neon-auth",
+  "name": "rag-youtube",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3000",
+    "dev": "next dev -p 3002",
     "build": "next build",
     "start": "next start",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
@@ -11,7 +11,8 @@
     "test:run": "vitest run",
     "test:watch": "vitest --watch",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "agent": "tsx ai/agent.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.65",

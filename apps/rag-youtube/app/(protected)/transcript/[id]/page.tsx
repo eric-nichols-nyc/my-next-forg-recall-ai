@@ -1,3 +1,5 @@
+import { SplitLayout } from "@/components/split-layout";
+import { TranscriptChat } from "@/components/transcript-chat";
 import { TranscriptNoteContent } from "./_components/transcript-note-content";
 import { getNoteById } from "./actions";
 
@@ -19,7 +21,10 @@ export default async function TranscriptIdPage({
 
   return (
     <div className="h-screen">
-      <TranscriptNoteContent note={note} />
+      <SplitLayout
+        left={<TranscriptNoteContent note={note} />}
+        right={<TranscriptChat sourceId={note.sourceId} />}
+      />
     </div>
   );
 }
