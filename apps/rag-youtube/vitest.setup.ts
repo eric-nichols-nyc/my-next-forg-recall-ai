@@ -21,4 +21,3 @@ vi.mock("@neondatabase/neon-js/auth/next", () => ({
 
 // Add global test setup here
 // For example, MSW server setup, global mocks, etc.
-

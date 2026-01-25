@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock the dependencies before importing the route
 vi.mock("@repo/neon-auth", () => ({
@@ -13,10 +13,10 @@ vi.mock("@repo/prisma-neon", () => ({
   },
 }));
 
-// Import after mocks are set up
-import { GET } from "@/app/api/summaries/route";
 import { getSession } from "@repo/neon-auth";
 import { database } from "@repo/prisma-neon";
+// Import after mocks are set up
+import { GET } from "@/app/api/summaries/route";
 
 describe("GET /api/summaries", () => {
   beforeEach(() => {
@@ -95,4 +95,3 @@ describe("GET /api/summaries", () => {
     expect(data.error).toBeDefined();
   });
 });
-

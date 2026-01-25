@@ -30,4 +30,3 @@ export default defineConfig({
     exclude: ["@neondatabase/neon-js"],
   },
 });
-
