@@ -1,7 +1,7 @@
 import { database } from "@repo/prisma-neon";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
-import { embeddings } from "@/ai/embeddings";
 import { model } from "@/lib/ai/models";
+import { embeddings } from "@/lib/embeddings";
 
 /**
  * Extract text content from a UIMessage

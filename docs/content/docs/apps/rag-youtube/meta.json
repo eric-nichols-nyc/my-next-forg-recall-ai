@@ -1,0 +1,11 @@
+{
+  "title": "RAG YouTube",
+  "pages": [
+    "index",
+    "architecture",
+    "embeddings",
+    "transcript-processing",
+    "usage-guide",
+    "api-reference"
+  ]
+}

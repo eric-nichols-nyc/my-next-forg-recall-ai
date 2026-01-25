@@ -1,0 +1,9 @@
+{
+  "title": "Apps",
+  "pages": [
+    "app",
+    "rag-youtube",
+    "rag-pdf",
+    "rag-webscraper"
+  ]
+}

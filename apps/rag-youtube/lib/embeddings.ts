@@ -9,7 +9,7 @@ dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 
 import { PGVectorStore } from "@langchain/community/vectorstores/pgvector";
 import { OpenAIEmbeddings } from "@langchain/openai";
-import { keys } from "../lib/keys";
+import { keys } from "./keys";
 
 /**
  * OpenAI Embeddings configuration

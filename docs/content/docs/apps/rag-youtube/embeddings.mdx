@@ -1,0 +1,152 @@
+---
+title: Embeddings & Vector Store
+description: How embeddings are generated and stored for semantic search in rag-youtube.
+---
+
+The app uses **OpenAI embeddings** and **PGVector** (PostgreSQL with pgvector) to enable semantic search over transcript chunks.
+
+## Architecture
+
+```
+┌─────────────────────────────────────────┐
+│      Transcript Chunks (Text)           │
+└────────────────────┬────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────┐
+│    OpenAI Embeddings API                │
+│    (text-embedding-3-large)             │
+│    - 3072 dimensions                     │
+│    - Batch processing                    │
+└────────────────────┬────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────┐
+│      Vector Embeddings                  │
+│      [0.123, -0.456, 0.789, ...]        │
+└────────────────────┬────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────┐
+│      PostgreSQL + pgvector               │
+│      - HNSW index for fast search        │
+│      - Cosine similarity                 │
+│      - Persistent storage                │
+└─────────────────────────────────────────┘
+```
+
+## Embedding Model
+
+- **Model**: `text-embedding-3-large`
+- **Dimensions**: 3072 (default)
+- **Provider**: OpenAI
+- **Cost**: ~$0.0001 per 1K tokens
+
+## Vector Store Setup
+
+### Database Configuration
+
+The vector store uses the existing `Chunk` table:
+
+```typescript
+PGVectorStore.initialize(embeddings, {
+  postgresConnectionOptions: {
+    connectionString: databaseUrl,
+  },
+  tableName: "Chunk",
+  contentColumnName: "text",
+});
+```
+
+### Required Columns
+
+- `id` (uuid, primary key)
+- `text` (text) — chunk content
+- `metadata` (jsonb)
+- `embedding` (vector)
+
+### Extension and Index
+
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+
+CREATE INDEX IF NOT EXISTS "Chunk_embedding_idx"
+ON "Chunk" USING hnsw ("embedding" vector_cosine_ops);
+```
+
+## Embedding Generation
+
+Embeddings are generated in batches and stored via raw SQL (Prisma does not support the vector type directly):
+
+```typescript
+const textsToEmbed = chunks
+  .map((chunk) => chunk.text)
+  .filter((text) => text !== null);
+
+const embeddingVectors = await embeddings.embedDocuments(textsToEmbed);
+
+// Store: raw SQL
+const vectorString = `[${embedding.join(",")}]`;
+await database.$executeRawUnsafe(
+  `UPDATE "Chunk" SET embedding = $1::vector WHERE id = $2`,
+  vectorString,
+  chunkId
+);
+```
+
+## Vector Store API
+
+### Adding Documents
+
+```typescript
+import { vectorStore } from "@/lib/embeddings";
+import { Document } from "@langchain/core/documents";
+
+const documents = [
+  new Document({
+    pageContent: "Chunk text here",
+    metadata: { sourceId: "...", chunkIndex: 0 },
+  }),
+];
+
+await vectorStore.addDocuments(documents);
+```
+
+### Similarity Search
+
+```typescript
+const results = await vectorStore.similaritySearchWithScore(
+  "query text",
+  5,
+  { sourceId: "specific-source-id" }
+);
+```
+
+### Filtering by Metadata
+
+```typescript
+const results = await vectorStore.similaritySearch("query", 5, {
+  sourceId: "abc-123",
+  sourceType: "youtube",
+});
+```
+
+## How Similarity Works
+
+- **Cosine similarity** between query embedding and chunk embeddings
+- Range -1 (opposite) to 1 (identical); higher = more similar
+- HNSW index for approximate nearest neighbor search
+
+## Environment Variables
+
+```bash
+# .env.local
+OPENAI_API_KEY=sk-...
+DATABASE_URL=postgresql://...
+```
+
+## See Also
+
+- [Usage Guide](/docs/apps/rag-youtube/usage-guide)
+- [API Reference](/docs/apps/rag-youtube/api-reference)
+- [Architecture](/docs/apps/rag-youtube/architecture)

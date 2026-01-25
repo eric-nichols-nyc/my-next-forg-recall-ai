@@ -31,7 +31,7 @@ const HomePage = async () => {
             This app demonstrates authentication with Neon database integration.
           </p>
           <Button asChild className="w-full">
-            <Link href={isLoggedIn ? "/notes" : "/auth/sign-in"}>
+            <Link href={isLoggedIn ? "/transcript" : "/auth/sign-in"}>
               {isLoggedIn ? "Get Started" : "Sign In"}
             </Link>
           </Button>

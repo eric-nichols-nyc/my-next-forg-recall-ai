@@ -1,19 +1,25 @@
 ---
 title: App
-description: How the main application works in next-forge.
+description: The main application in this monorepo (placeholder).
 ---
 
-<Tip>The `app` application runs on port 3000. We recommend deploying it to `app.{yourdomain}.com`.</Tip>
+<Callout type="info" title="Placeholder">
+  Documentation for `apps/app` is coming soon. This app is the main user-facing application.
+</Callout>
 
-next-forge exports the main app from the `apps/app` directory. It is designed to be run on a subdomain of your choice, and is used to run the main user-facing application.
+The main application lives in the `apps/app` directory. It is designed to be run on your primary subdomain and serves as the core user-facing experience.
 
 ## Overview
 
-The `app` application is the main user-facing application built on [Next.js](https://nextjs.org). It is designed to be a starting point for your own unique projects, containing all the core functionality you need.
+_Details to be added._ This section will cover:
 
-## Features
+- Design system and UI
+- Authentication
+- Database and notes/summaries
+- Integration with RAG-based features (e.g. YouTube, PDF, web)
 
-- **Design System**: The app is connected to the [Design System](/packages/design-system/components) and includes a variety of components, hooks, and utilities to help you get started.
-- **Authentication**: The app includes a fully-featured [authentication system](/packages/authentication) with support for email login. You can easily extend it to support other providers and authentication methods. The app is also broken into authenticated and unauthenticated route groups.
-- **Database**: The app is connected to the [Database](/packages/database) and can fetch data in React Server Components.
-- **Collaboration**: The app is connected to the [Collaboration](/packages/collaboration) and contains Avatar Stack and Live Cursor components.
+## Related
+
+- [RAG YouTube](/docs/apps/rag-youtube) — YouTube transcript RAG
+- [RAG PDF](/docs/apps/rag-pdf) — PDF RAG (coming soon)
+- [RAG Web Scraper](/docs/apps/rag-webscraper) — Web scraper RAG (coming soon)

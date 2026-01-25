@@ -1,0 +1,42 @@
+---
+title: RAG YouTube Overview
+description: How RAG is used in the rag-youtube app for YouTube transcript search and Q&A.
+---
+
+<Tip>The `rag-youtube` app runs as a standalone Next.js app. It demonstrates RAG over YouTube transcripts using embeddings, PGVector, and a LangGraph agent.</Tip>
+
+The `apps/rag-youtube` app implements **Retrieval-Augmented Generation (RAG)** over YouTube transcripts: it chunks and embeds transcript segments, stores vectors in PostgreSQL (pgvector), and answers questions via a LangGraph agent with conversation memory.
+
+## What It Does
+
+1. **Ingest** — User submits a YouTube URL; the app fetches the transcript, saves segments to `SourceText`, and optionally generates a summary.
+2. **Process** — `lib/transcript-processor` chunks segments (preserving timestamps), generates OpenAI embeddings, and stores chunks + vectors in the `Chunk` table.
+3. **Query** — The user asks questions; the agent runs vector similarity search over chunks (filtered by source), then uses an LLM to produce answers with optional conversation history.
+
+## Key Pieces
+
+| Layer | Location | Role |
+|-------|----------|------|
+| Server actions | `app/(protected)/transcript/actions.ts` | Auth, validation, orchestration |
+| Chunking & embed | `lib/transcript-processor.ts` | Segment-based chunking, batch embedding, DB writes |
+| Embeddings & vector store | `lib/embeddings.ts` | OpenAI embeddings, PGVector store |
+| Agent | `lib/ai/agent.ts` | LangGraph agent, vector search, memory |
+
+## Docs in This Section
+
+- [Architecture](/docs/apps/rag-youtube/architecture) — System design and choices
+- [Embeddings](/docs/apps/rag-youtube/embeddings) — Embedding model, PGVector, and vector store usage
+- [Transcript Processing](/docs/apps/rag-youtube/transcript-processing) — Chunking strategy and processing pipeline
+- [Usage Guide](/docs/apps/rag-youtube/usage-guide) — Prerequisites, examples, and frontend integration
+- [API Reference](/docs/apps/rag-youtube/api-reference) — Functions and types
+
+## Prerequisites
+
+- Neon PostgreSQL with `pgvector` extension
+- `Chunk` table with an `embedding` column (vector type)
+- Env: `OPENAI_API_KEY`, `DATABASE_URL`, `ANTHROPIC_API_KEY` (for the agent)
+
+## Related Apps
+
+- [RAG PDF](/docs/apps/rag-pdf) — Planned RAG over PDFs
+- [RAG Web Scraper](/docs/apps/rag-webscraper) — Planned RAG over scraped web pages

@@ -1,0 +1,143 @@
+---
+title: API Reference
+description: Function and type reference for the rag-youtube RAG pipeline.
+---
+
+## Transcript Processor
+
+### `processTranscript`
+
+Processes transcript segments into chunks with embeddings.
+
+```typescript
+// lib/transcript-processor
+function processTranscript({
+  segments,
+  sourceId,
+  ownerId,
+  sourceType?,  // default "youtube"
+  url?,
+  maxChars?,   // default 3500
+}: {
+  segments: TranscriptSegment[];
+  sourceId: string;
+  ownerId: string;
+  sourceType?: string;
+  url?: string;
+  maxChars?: number;
+}): Promise<{ chunkCount: number; chunkIds: string[] }>
+```
+
+### `chunkSegments`
+
+Groups segments into chunks without splitting a segment.
+
+```typescript
+function chunkSegments(
+  segments: TranscriptSegment[],
+  maxChars?: number
+): Array<{ chunkIndex: number; text: string; metadata: { ... } }>
+```
+
+### `chunksToDocuments`
+
+Converts chunks to LangChain `Document` objects.
+
+### `processTranscriptWithLangChainSplitter`
+
+Uses `RecursiveCharacterTextSplitter`; may lose segment boundaries and timestamps.
+
+## Types
+
+### `TranscriptSegment`
+
+```typescript
+type TranscriptSegment = {
+  ordinal: number;
+  startSec: number | null;
+  endSec: number | null;
+  text: string;
+};
+```
+
+### `ChunkMetadata`
+
+```typescript
+type ChunkMetadata = {
+  ordinalStart: number;
+  ordinalEnd: number;
+  startSec: number | null;
+  endSec: number | null;
+  sourceId: string;
+  sourceType?: string;
+  url?: string;
+};
+```
+
+## Embeddings and Vector Store
+
+### `embeddings` (OpenAI)
+
+```typescript
+import { embeddings } from "@/lib/embeddings";
+
+const vector = await embeddings.embedQuery("text");
+const vectors = await embeddings.embedDocuments(["text1", "text2"]);
+```
+
+### `vectorStore`
+
+```typescript
+import { vectorStore } from "@/lib/embeddings";
+
+await vectorStore.addDocuments(documents);
+const docs = await vectorStore.similaritySearch(query, k, filter);
+const withScores = await vectorStore.similaritySearchWithScore(query, k, filter);
+```
+
+## Agent
+
+### `askAboutVideo`
+
+```typescript
+import { askAboutVideo } from "@/lib/ai/agent";
+
+const answer = await askAboutVideo(question: string, threadId?: string): Promise<string>
+```
+
+### `clearAgentMemory` / `getAgentMemory`
+
+```typescript
+import { clearAgentMemory, getAgentMemory } from "@/lib/ai/agent";
+
+await clearAgentMemory(threadId: string): Promise<void>;
+const history = getAgentMemory(threadId: string);
+```
+
+## Server Actions
+
+### `importYoutube`
+
+```typescript
+import { importYoutube } from "@/app/(protected)/transcript/actions";
+
+const { noteId } = await importYoutube({ url: string });
+```
+
+## Database Models
+
+- **Chunk**: `id`, `ownerId`, `sourceId`, `chunkIndex`, `text`, `metadata`, `embedding` (vector)
+- **Source**: `id`, `ownerId`, `type`, `url`, `title`, `texts`, `chunks`
+- **SourceText**: `id`, `sourceId`, `ownerId`, `ordinal`, `text`, `startSec`, `endSec`
+
+## Common Errors
+
+- `OPENAI_API_KEY is required` — set env
+- `DATABASE_URL is required` — set env
+- `pgvector extension not enabled` — run `CREATE EXTENSION IF NOT EXISTS vector;`
+
+## See Also
+
+- [Usage Guide](/docs/apps/rag-youtube/usage-guide)
+- [Architecture](/docs/apps/rag-youtube/architecture)
+- [Embeddings](/docs/apps/rag-youtube/embeddings)

@@ -1,0 +1,126 @@
+---
+title: Usage Guide
+description: Step-by-step usage of transcript processing and RAG in rag-youtube.
+---
+
+## Prerequisites
+
+1. **Database**: Neon PostgreSQL, pgvector enabled, `Chunk` table with `embedding` column
+2. **Environment** (e.g. `.env.local`):
+
+   ```bash
+   OPENAI_API_KEY=sk-...
+   DATABASE_URL=postgresql://...
+   ANTHROPIC_API_KEY=sk-ant-...
+   ```
+
+3. **Install**: `pnpm install` from the monorepo root
+
+## 1. Import a YouTube Transcript
+
+```typescript
+import { importYoutube } from "@/app/(protected)/transcript/actions";
+
+const result = await importYoutube({
+  url: "https://www.youtube.com/watch?v=VIDEO_ID",
+});
+
+console.log(`Note ID: ${result.noteId}`);
+```
+
+This fetches the transcript, saves segments to `SourceText`, generates a summary, runs chunking and embedding, and returns the note ID.
+
+## 2. Process Transcript Segments Directly
+
+```typescript
+import { processTranscript } from "@/lib/transcript-processor";
+
+const result = await processTranscript({
+  segments: [
+    { ordinal: 0, startSec: 0, endSec: 5, text: "Hello world" },
+    { ordinal: 1, startSec: 5, endSec: 10, text: "This is a test" },
+  ],
+  sourceId: "source-uuid",
+  ownerId: "user-uuid",
+  sourceType: "youtube",
+  url: "https://youtube.com/watch?v=...",
+});
+
+console.log(`Created ${result.chunkCount} chunks`);
+```
+
+## 3. Query Transcripts
+
+### Using the Agent
+
+```typescript
+import { askAboutVideo } from "@/lib/ai/agent";
+
+const answer = await askAboutVideo(
+  "What are the main topics discussed in this video?",
+  "thread-123" // optional: conversation history
+);
+```
+
+### Direct Vector Search
+
+```typescript
+import { vectorStore } from "@/lib/embeddings";
+
+const results = await vectorStore.similaritySearchWithScore(
+  "Next.js performance",
+  5,
+  { sourceId: "source-uuid" }
+);
+
+for (const [doc, score] of results) {
+  console.log(`Score: ${score.toFixed(4)}`);
+  console.log(`Content: ${doc.pageContent}`);
+  console.log(`Time: ${doc.metadata.startSec}s - ${doc.metadata.endSec}s`);
+}
+```
+
+## Frontend: Import Form
+
+```tsx
+"use client";
+
+import { importYoutube } from "@/app/(protected)/transcript/actions";
+import { useActionState } from "react";
+
+export function YouTubeImportForm() {
+  const [state, formAction, isPending] = useActionState(importYoutube, null);
+
+  return (
+    <form action={formAction}>
+      <input name="url" type="url" placeholder="YouTube URL" required disabled={isPending} />
+      <button type="submit" disabled={isPending}>
+        {isPending ? "Processing..." : "Import Transcript"}
+      </button>
+      {state?.error && <p className="error">{state.error}</p>}
+      {state?.noteId && <p>Success! Note ID: {state.noteId}</p>}
+    </form>
+  );
+}
+```
+
+## Conversation History
+
+```typescript
+const threadId = "user-123-video-456";
+
+const answer1 = await askAboutVideo("What is this video about?", threadId);
+const answer2 = await askAboutVideo("Can you explain the first point in more detail?", threadId);
+```
+
+## Performance Tips
+
+- Use batch embedding; avoid embedding one chunk at a time.
+- Tune chunk size: smaller (1000–2000) for precision, larger (3500–5000) for fewer chunks.
+- Use a small `k` (e.g. 5–10) and metadata filters when searching.
+
+## See Also
+
+- [API Reference](/docs/apps/rag-youtube/api-reference)
+- [Architecture](/docs/apps/rag-youtube/architecture)
+- [Embeddings](/docs/apps/rag-youtube/embeddings)

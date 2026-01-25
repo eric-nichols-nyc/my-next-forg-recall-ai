@@ -4,7 +4,7 @@
  * (from the rag-youtube directory)
  */
 
-import { processVideo1Transcript } from "../agent.js";
+import { processVideo1Transcript } from "./agent.js";
 
 // Execute the processing
 processVideo1Transcript()
@@ -16,4 +16,3 @@ processVideo1Transcript()
     console.error("❌ Error processing transcript:", error);
     process.exit(1);
   });
-

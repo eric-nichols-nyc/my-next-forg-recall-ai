@@ -14,7 +14,7 @@
 
 import { Document } from "@langchain/core/documents";
 import { database } from "@repo/prisma-neon";
-import { embeddings, vectorStore } from "@/ai/embeddings";
+import { embeddings, vectorStore } from "@/lib/embeddings";
 
 export type TranscriptSegment = {
   ordinal: number;
@@ -298,7 +298,7 @@ export async function processTranscriptWithLangChainSplitter({
   chunkIds: string[];
 }> {
   // Import here to avoid circular dependencies
-  const { textSplitter } = await import("@/ai/agent");
+  const { textSplitter } = await import("@/lib/ai/agent");
 
   // Split text using LangChain's splitter
   const textChunks = await textSplitter.splitText(transcriptText);

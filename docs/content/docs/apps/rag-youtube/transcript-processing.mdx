@@ -1,0 +1,80 @@
+---
+title: Transcript Processing
+description: How YouTube transcripts are chunked and embedded for RAG in rag-youtube.
+---
+
+The transcript pipeline takes raw YouTube segments and: (1) chunks them while preserving segment boundaries, (2) generates embeddings with OpenAI, (3) stores chunks and vectors in the database, and (4) enables semantic search via the vector store.
+
+## Architecture
+
+```
+User Action (YouTube URL)
+        ↓
+actions.ts → fetch transcript, save SourceText, summary
+        ↓
+transcript-processor.ts
+  1. chunkSegments() — preserve timestamps, never split a segment
+  2. Create chunks in DB
+  3. Batch embed (OpenAI text-embedding-3-large)
+  4. Update chunks with embedding vectors
+        ↓
+Chunk table (text, metadata, embedding)
+```
+
+## Chunking Strategy
+
+**Segment-based chunking**:
+
+- Preserves segment boundaries
+- Keeps timestamps (`startSec`, `endSec`)
+- Configurable `maxChars` (default 3500)
+
+Chunk text is formatted like: `- [0:00] Hello world\n- [0:05] This is a test\n...`
+
+Metadata includes: `ordinalStart`, `ordinalEnd`, `startSec`, `endSec`, `sourceId`, `sourceType`, `url`.
+
+## Basic Usage
+
+```typescript
+import { processTranscript } from "@/lib/transcript-processor";
+
+const result = await processTranscript({
+  segments: transcriptSegments,
+  sourceId: "source-uuid",
+  ownerId: "user-uuid",
+  sourceType: "youtube",
+  url: "https://youtube.com/watch?v=...",
+  maxChars: 3500, // optional
+});
+
+console.log(`Created ${result.chunkCount} chunks`);
+```
+
+## Alternative: LangChain Splitter
+
+When segment boundaries are not required:
+
+```typescript
+import { processTranscriptWithLangChainSplitter } from "@/lib/transcript-processor";
+
+await processTranscriptWithLangChainSplitter({
+  transcriptText: fullTranscriptText,
+  sourceId: "source-uuid",
+  ownerId: "user-uuid",
+  chunkSize: 1000,
+  chunkOverlap: 200,
+});
+```
+
+<Warning>This can split across segments and lose timestamp precision.</Warning>
+
+## Database and Extensions
+
+- `Chunk` table with `embedding` as `vector` (pgvector)
+- `CREATE EXTENSION IF NOT EXISTS vector;`
+
+## See Also
+
+- [Usage Guide](/docs/apps/rag-youtube/usage-guide)
+- [Embeddings](/docs/apps/rag-youtube/embeddings)
+- [Architecture](/docs/apps/rag-youtube/architecture)

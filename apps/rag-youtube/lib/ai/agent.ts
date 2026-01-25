@@ -16,9 +16,9 @@ import { MemorySaver } from "@langchain/langgraph";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { z } from "zod";
-import { keys } from "../lib/keys";
+import { vectorStore } from "../embeddings";
+import { keys } from "../keys";
 import data from "./data.js";
-import { vectorStore } from "./embeddings";
 
 const video1 = data[0];
 /**
