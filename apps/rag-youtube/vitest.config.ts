@@ -26,5 +26,8 @@ export default defineConfig({
       "@": new URL("./", import.meta.url).pathname,
     },
   },
+  optimizeDeps: {
+    exclude: ["@neondatabase/neon-js"],
+  },
 });
 
