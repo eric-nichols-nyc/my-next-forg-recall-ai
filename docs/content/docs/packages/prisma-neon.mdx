@@ -1,0 +1,547 @@
+---
+title: Prisma Neon
+description: Prisma client package configured for Neon database with WebSocket support for serverless environments.
+---
+
+The `@repo/prisma-neon` package provides a type-safe Prisma client configured specifically for Neon database with WebSocket support, making it ideal for serverless environments like Vercel Edge Functions and Cloudflare Workers.
+
+## Overview
+
+This package wraps Prisma with the Neon adapter, providing:
+
+- **Type-safe database access** - Full TypeScript support with generated types
+- **Serverless-ready** - WebSocket support for Neon's serverless Postgres
+- **Automatic connection pooling** - Handled by Neon's serverless driver
+- **Row-level security** - Integration with Neon Auth via `auth.uid()` default values
+
+## Installation
+
+The package is already included in the monorepo. To use it in your app:
+
+```typescript
+import { database } from "@repo/prisma-neon";
+import type { Note, Source, ChatThread } from "@repo/prisma-neon";
+```
+
+## Configuration
+
+The package is configured in `packages/prisma-neon/index.ts`:
+
+```typescript
+import { neonConfig } from "@neondatabase/serverless";
+import { PrismaNeon } from "@prisma/adapter-neon";
+import ws from "ws";
+import { PrismaClient } from "./generated/client";
+
+// Configure WebSocket for serverless environments
+neonConfig.webSocketConstructor = ws;
+
+// Create Neon adapter with connection string
+const adapter = new PrismaNeon({ connectionString: keys().DATABASE_URL });
+
+// Export singleton database client
+export const database = new PrismaClient({ adapter });
+```
+
+### Environment Variables
+
+The package requires a `DATABASE_URL` environment variable:
+
+```bash
+DATABASE_URL=postgresql://user:password@host/database?sslmode=require
+```
+
+This is validated using `@t3-oss/env-nextjs` in the `keys.ts` file.
+
+## Generating the Prisma Client
+
+Before using the package, you must generate the Prisma client:
+
+```bash
+# From the package directory
+cd packages/prisma-neon
+pnpm build
+
+# Or from the workspace root
+pnpm --filter @repo/prisma-neon build
+```
+
+This command:
+- Reads the Prisma schema from `prisma/schema.prisma`
+- Generates the Prisma client to `./generated/client`
+- Makes the client available for import in other packages
+
+### When to Regenerate
+
+Regenerate the Prisma client when:
+- After cloning the repository for the first time
+- After pulling changes that modify `prisma/schema.prisma`
+- After running migrations that change the schema
+- If you see: `Module not found: Can't resolve './generated/client'`
+
+## Usage
+
+### Basic Queries
+
+```typescript
+import { database } from "@repo/prisma-neon";
+
+// Find all sources for a user
+const sources = await database.source.findMany({
+  where: { ownerId: user.id },
+  include: { texts: true },
+});
+
+// Create a new source
+const source = await database.source.create({
+  data: {
+    type: "youtube",
+    url: "https://youtube.com/watch?v=...",
+    title: "Video Title",
+  },
+});
+```
+
+### Relations
+
+```typescript
+// Include related data
+const source = await database.source.findUnique({
+  where: { id: sourceId },
+  include: {
+    texts: true,
+    notes: true,
+    flashcards: true,
+    quizzes: true,
+    threads: {
+      include: {
+        messages: true,
+      },
+    },
+  },
+});
+
+// Nested creates
+const source = await database.source.create({
+  data: {
+    type: "youtube",
+    url: "...",
+    texts: {
+      create: [
+        { ordinal: 0, text: "First segment" },
+        { ordinal: 1, text: "Second segment" },
+      ],
+    },
+  },
+});
+```
+
+### Transactions
+
+```typescript
+await database.$transaction(async (tx) => {
+  const source = await tx.source.create({
+    data: { type: "youtube", url: "..." },
+  });
+
+  await tx.sourceText.createMany({
+    data: segments.map((seg, i) => ({
+      sourceId: source.id,
+      ordinal: i,
+      text: seg.text,
+    })),
+  });
+
+  return source;
+});
+```
+
+## Database Schema
+
+The complete database schema is defined in `packages/prisma-neon/prisma/schema.prisma`. Here's the structure:
+
+### Models
+
+#### Source
+
+Represents a source document (PDF, web page, YouTube video, or text).
+
+```prisma
+model Source {
+  id         String       @id @default(uuid()) @db.Uuid
+  ownerId    String       @default(dbgenerated("auth.uid()")) @db.Uuid
+  type       SourceType
+  title      String?
+  url        String?
+  filename   String?
+  sha256     String?      @unique
+  createdAt  DateTime     @default(now()) @db.Timestamptz(6)
+  texts      SourceText[]
+  notes      Note?
+  flashcards Flashcard[]
+  quizzes    Quiz[]
+  threads    ChatThread[]
+
+  @@index([ownerId])
+  @@index([type])
+}
+```
+
+#### SourceText
+
+Text segments extracted from a source (pages, transcript segments, etc.).
+
+```prisma
+model SourceText {
+  id         String         @id @default(uuid()) @db.Uuid
+  ownerId    String         @default(dbgenerated("auth.uid()")) @db.Uuid
+  sourceId   String         @db.Uuid
+  ordinal    Int
+  pageNumber Int?
+  startSec   Int?
+  endSec     Int?
+  text       String
+  createdAt  DateTime       @default(now()) @db.Timestamptz(6)
+  source     Source         @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  flashcards Flashcard[]
+  questions  QuizQuestion[]
+
+  @@unique([sourceId, ordinal])
+  @@index([sourceId])
+  @@index([ownerId])
+}
+```
+
+#### Note
+
+AI-generated summary/notes for a source.
+
+```prisma
+model Note {
+  id        String   @id @default(uuid()) @db.Uuid
+  ownerId   String   @default(dbgenerated("auth.uid()")) @db.Uuid
+  sourceId  String   @unique @db.Uuid
+  model     String?
+  summaryMd String
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  title     String?
+  source    Source   @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
+}
+```
+
+#### Flashcard
+
+Flashcards generated from source content.
+
+```prisma
+model Flashcard {
+  id           String      @id @default(uuid()) @db.Uuid
+  ownerId      String      @default(dbgenerated("auth.uid()")) @db.Uuid
+  sourceId     String      @db.Uuid
+  front        String
+  back         String
+  sourceTextId String?     @db.Uuid
+  createdAt    DateTime    @default(now()) @db.Timestamptz(6)
+  source       Source      @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  sourceText   SourceText? @relation(fields: [sourceTextId], references: [id], onDelete: SetNull)
+
+  @@index([sourceId])
+  @@index([sourceTextId])
+  @@index([ownerId])
+}
+```
+
+#### Quiz
+
+Quizzes generated from source content.
+
+```prisma
+model Quiz {
+  id        String         @id @default(uuid()) @db.Uuid
+  ownerId   String         @default(dbgenerated("auth.uid()")) @db.Uuid
+  sourceId  String         @db.Uuid
+  title     String
+  createdAt DateTime       @default(now()) @db.Timestamptz(6)
+  source    Source         @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  questions QuizQuestion[]
+
+  @@index([sourceId])
+  @@index([ownerId])
+}
+```
+
+#### QuizQuestion
+
+Individual questions within a quiz.
+
+```prisma
+model QuizQuestion {
+  id           String      @id @default(uuid()) @db.Uuid
+  ownerId      String      @default(dbgenerated("auth.uid()")) @db.Uuid
+  quizId       String      @db.Uuid
+  prompt       String
+  choices      Json
+  correctIndex Int
+  explanation  String?
+  sourceTextId String?     @db.Uuid
+  quiz         Quiz        @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  sourceText   SourceText? @relation(fields: [sourceTextId], references: [id], onDelete: SetNull)
+
+  @@index([quizId])
+  @@index([sourceTextId])
+  @@index([ownerId])
+}
+```
+
+#### ChatThread
+
+Chat threads associated with a source for RAG conversations.
+
+```prisma
+model ChatThread {
+  id        String        @id @default(uuid()) @db.Uuid
+  ownerId   String        @default(dbgenerated("auth.uid()")) @db.Uuid
+  sourceId  String        @db.Uuid
+  createdAt DateTime      @default(now()) @db.Timestamptz(6)
+  source    Source        @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  messages  ChatMessage[]
+
+  @@index([sourceId])
+  @@index([ownerId])
+}
+```
+
+#### ChatMessage
+
+Individual messages within a chat thread.
+
+```prisma
+model ChatMessage {
+  id        String     @id @default(uuid()) @db.Uuid
+  ownerId   String     @default(dbgenerated("auth.uid()")) @db.Uuid
+  threadId  String     @db.Uuid
+  role      ChatRole
+  content   String
+  citations Json?
+  createdAt DateTime   @default(now()) @db.Timestamptz(6)
+  thread    ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([threadId, createdAt])
+  @@index([ownerId])
+}
+```
+
+#### Chunk
+
+Vector embeddings chunks for semantic search.
+
+```prisma
+model Chunk {
+  id         String                 @id(map: "chunk_pkey1") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ownerId    String                 @default(dbgenerated("auth.uid()")) @db.Uuid
+  sourceId   String                 @db.Uuid
+  chunkIndex Int
+  text       String?
+  metadata   Json?
+  embedding  Unsupported("vector")?
+
+  @@unique([sourceId, chunkIndex])
+  @@index([ownerId])
+  @@index([sourceId, chunkIndex])
+}
+```
+
+#### Job
+
+Background job tracking for async operations.
+
+```prisma
+model Job {
+  id           String        @id @default(cuid())
+  ownerId      String
+  sourceId     String?
+  type         JobType
+  status       JobStatus     @default(QUEUED)
+  attempts     Int           @default(0)
+  maxAttempts  Int           @default(3)
+  errorCode    JobErrorCode?
+  errorMessage String?
+  payload      Json?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  startedAt    DateTime?
+  finishedAt   DateTime?
+
+  @@unique([ownerId, sourceId, type, status])
+  @@index([ownerId, createdAt])
+  @@index([sourceId, createdAt])
+  @@index([status, createdAt])
+  @@index([type, status, createdAt])
+}
+```
+
+### Enums
+
+#### SourceType
+
+```prisma
+enum SourceType {
+  pdf
+  web
+  youtube
+  text
+}
+```
+
+#### ChatRole
+
+```prisma
+enum ChatRole {
+  user
+  assistant
+  system
+}
+```
+
+#### JobType
+
+```prisma
+enum JobType {
+  YOUTUBE_FETCH_TRANSCRIPT
+  SOURCE_CHUNK
+  SOURCE_EMBED
+  NOTE_GENERATE_SUMMARY
+}
+```
+
+#### JobStatus
+
+```prisma
+enum JobStatus {
+  QUEUED
+  PROCESSING
+  SUCCEEDED
+  FAILED
+}
+```
+
+#### JobErrorCode
+
+```prisma
+enum JobErrorCode {
+  INVALID_URL
+  METADATA_FETCH_FAILED
+  TRANSCRIPT_UNAVAILABLE
+  TRANSCRIPT_FETCH_FAILED
+  CHUNKING_FAILED
+  EMBEDDING_FAILED
+  SUMMARY_FAILED
+  DB_WRITE_FAILED
+  UNKNOWN
+}
+```
+
+## Row-Level Security
+
+The schema uses Neon Auth's `auth.uid()` function for automatic row-level security:
+
+```prisma
+ownerId String @default(dbgenerated("auth.uid()")) @db.Uuid
+```
+
+This ensures that:
+- Records are automatically associated with the authenticated user
+- Database-level security policies can filter by `ownerId`
+- No manual `ownerId` assignment needed in application code
+
+## Migrations
+
+Migrations are located in `packages/prisma-neon/prisma/migrations/`. To create a new migration:
+
+```bash
+cd packages/prisma-neon
+npx prisma migrate dev --name your_migration_name
+```
+
+To apply migrations in production:
+
+```bash
+npx prisma migrate deploy
+```
+
+## Vector Embeddings
+
+The `Chunk` model includes a `vector` type for storing embeddings. This requires the `pgvector` extension in your Neon database:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+```
+
+You can then use vector similarity search with Prisma:
+
+```typescript
+// Note: Vector operations may require raw SQL queries
+const results = await database.$queryRaw`
+  SELECT id, text, embedding <-> ${queryEmbedding}::vector AS distance
+  FROM "Chunk"
+  WHERE "ownerId" = ${userId}
+  ORDER BY distance
+  LIMIT 10
+`;
+```
+
+## Type Exports
+
+The package exports all Prisma types for use in your application:
+
+```typescript
+import type {
+  Source,
+  SourceText,
+  Note,
+  Flashcard,
+  Quiz,
+  QuizQuestion,
+  ChatThread,
+  ChatMessage,
+  Chunk,
+  Job,
+  SourceType,
+  ChatRole,
+  JobType,
+  JobStatus,
+  JobErrorCode,
+} from "@repo/prisma-neon";
+```
+
+## Troubleshooting
+
+### Module not found: Can't resolve './generated/client'
+
+The Prisma client hasn't been generated. Run:
+
+```bash
+pnpm --filter @repo/prisma-neon build
+```
+
+### Connection errors in serverless environments
+
+Ensure your `DATABASE_URL` includes the correct connection parameters for Neon's serverless Postgres. The WebSocket configuration is handled automatically by the package.
+
+### Type errors after schema changes
+
+After modifying the schema, regenerate the client:
+
+```bash
+pnpm --filter @repo/prisma-neon build
+```
+
+Then restart your TypeScript server in your IDE.
+
+## Related Packages
+
+- `@neondatabase/serverless` - Neon's serverless Postgres driver
+- `@prisma/adapter-neon` - Prisma adapter for Neon
+- `@prisma/client` - Prisma ORM client

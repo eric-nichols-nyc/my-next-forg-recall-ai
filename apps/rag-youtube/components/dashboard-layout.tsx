@@ -113,15 +113,13 @@ export function DashboardLayout({
         <SidebarRail />
       </Sidebar>
       <SidebarInset className="flex flex-col">
-        {headerTitle || headerActions ? (
-          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-            {headerTitle ? (
-              <h1 className="font-semibold text-lg">{headerTitle}</h1>
-            ) : null}
-            <div className="flex-1" />
-            {headerActions ? headerActions : null}
-          </header>
-        ) : null}
+        <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
+          {headerTitle ? (
+            <h1 className="font-semibold text-lg">{headerTitle}</h1>
+          ) : null}
+          <div className="flex-1" />
+          {headerActions ? headerActions : null}
+        </header>
         <div className={`flex flex-1 flex-col ${className || ""}`}>
           {children}
         </div>

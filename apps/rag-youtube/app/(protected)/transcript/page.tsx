@@ -1,11 +1,15 @@
 import { SplitLayout } from "../../../components/split-layout";
-import { TranscriptEmptyState } from "./_components/transcript-empty-state";
+import { TranscriptContent } from "./_components/transcript-content";
+import { getUserTranscripts } from "./actions";
 
 export default async function TranscriptPage() {
+  const transcripts = await getUserTranscripts();
+  console.log("User transcripts:", transcripts);
+
   return (
     <div className="h-screen">
       <SplitLayout
-        left={<TranscriptEmptyState />}
+        left={<TranscriptContent transcripts={transcripts} />}
         right={
           <div className="flex h-full flex-col gap-6 overflow-y-auto border-l bg-muted/50 p-6">
             <div className="space-y-4">
