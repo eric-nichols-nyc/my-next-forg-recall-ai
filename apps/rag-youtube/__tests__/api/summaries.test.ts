@@ -51,7 +51,7 @@ describe("GET /api/summaries", () => {
       {
         id: "note-2",
         sourceId: "source-2",
-        title: "Note 2",
+        title: null,
         summaryMd: "# Summary 2",
         createdAt: new Date("2024-01-02"),
         source: { title: null },
@@ -73,6 +73,8 @@ describe("GET /api/summaries", () => {
     expect(response.status).toBe(200);
     expect(data.summaries).toHaveLength(2);
     expect(data.summaries[0].id).toBe("note-1");
+    expect(data.summaries[0].title).toBe("Note 1");
+    expect(data.summaries[1].title).toBe("Untitled Note");
   });
 
   it("should return 500 on database error", async () => {
@@ -92,6 +94,7 @@ describe("GET /api/summaries", () => {
     const data = await response.json();
 
     expect(response.status).toBe(500);
-    expect(data.error).toBeDefined();
+    expect(data).toHaveProperty("error");
+    expect(typeof data.error).toBe("string");
   });
 });
