@@ -30,6 +30,7 @@ export type SourceMinAggregateOutputType = {
   type: $Enums.SourceType | null
   title: string | null
   url: string | null
+  thumbnail: string | null
   filename: string | null
   sha256: string | null
   createdAt: Date | null
@@ -41,6 +42,7 @@ export type SourceMaxAggregateOutputType = {
   type: $Enums.SourceType | null
   title: string | null
   url: string | null
+  thumbnail: string | null
   filename: string | null
   sha256: string | null
   createdAt: Date | null
@@ -52,6 +54,7 @@ export type SourceCountAggregateOutputType = {
   type: number
   title: number
   url: number
+  thumbnail: number
   filename: number
   sha256: number
   createdAt: number
@@ -65,6 +68,7 @@ export type SourceMinAggregateInputType = {
   type?: true
   title?: true
   url?: true
+  thumbnail?: true
   filename?: true
   sha256?: true
   createdAt?: true
@@ -76,6 +80,7 @@ export type SourceMaxAggregateInputType = {
   type?: true
   title?: true
   url?: true
+  thumbnail?: true
   filename?: true
   sha256?: true
   createdAt?: true
@@ -87,6 +92,7 @@ export type SourceCountAggregateInputType = {
   type?: true
   title?: true
   url?: true
+  thumbnail?: true
   filename?: true
   sha256?: true
   createdAt?: true
@@ -171,6 +177,7 @@ export type SourceGroupByOutputType = {
   type: $Enums.SourceType
   title: string | null
   url: string | null
+  thumbnail: string | null
   filename: string | null
   sha256: string | null
   createdAt: Date
@@ -203,6 +210,7 @@ export type SourceWhereInput = {
   type?: Prisma.EnumSourceTypeFilter<"Source"> | $Enums.SourceType
   title?: Prisma.StringNullableFilter<"Source"> | string | null
   url?: Prisma.StringNullableFilter<"Source"> | string | null
+  thumbnail?: Prisma.StringNullableFilter<"Source"> | string | null
   filename?: Prisma.StringNullableFilter<"Source"> | string | null
   sha256?: Prisma.StringNullableFilter<"Source"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Source"> | Date | string
@@ -219,6 +227,7 @@ export type SourceOrderByWithRelationInput = {
   type?: Prisma.SortOrder
   title?: Prisma.SortOrderInput | Prisma.SortOrder
   url?: Prisma.SortOrderInput | Prisma.SortOrder
+  thumbnail?: Prisma.SortOrderInput | Prisma.SortOrder
   filename?: Prisma.SortOrderInput | Prisma.SortOrder
   sha256?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -239,6 +248,7 @@ export type SourceWhereUniqueInput = Prisma.AtLeast<{
   type?: Prisma.EnumSourceTypeFilter<"Source"> | $Enums.SourceType
   title?: Prisma.StringNullableFilter<"Source"> | string | null
   url?: Prisma.StringNullableFilter<"Source"> | string | null
+  thumbnail?: Prisma.StringNullableFilter<"Source"> | string | null
   filename?: Prisma.StringNullableFilter<"Source"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Source"> | Date | string
   texts?: Prisma.SourceTextListRelationFilter
@@ -254,6 +264,7 @@ export type SourceOrderByWithAggregationInput = {
   type?: Prisma.SortOrder
   title?: Prisma.SortOrderInput | Prisma.SortOrder
   url?: Prisma.SortOrderInput | Prisma.SortOrder
+  thumbnail?: Prisma.SortOrderInput | Prisma.SortOrder
   filename?: Prisma.SortOrderInput | Prisma.SortOrder
   sha256?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -271,6 +282,7 @@ export type SourceScalarWhereWithAggregatesInput = {
   type?: Prisma.EnumSourceTypeWithAggregatesFilter<"Source"> | $Enums.SourceType
   title?: Prisma.StringNullableWithAggregatesFilter<"Source"> | string | null
   url?: Prisma.StringNullableWithAggregatesFilter<"Source"> | string | null
+  thumbnail?: Prisma.StringNullableWithAggregatesFilter<"Source"> | string | null
   filename?: Prisma.StringNullableWithAggregatesFilter<"Source"> | string | null
   sha256?: Prisma.StringNullableWithAggregatesFilter<"Source"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Source"> | Date | string
@@ -282,6 +294,7 @@ export type SourceCreateInput = {
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
+  thumbnail?: string | null
   filename?: string | null
   sha256?: string | null
   createdAt?: Date | string
@@ -298,6 +311,7 @@ export type SourceUncheckedCreateInput = {
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
+  thumbnail?: string | null
   filename?: string | null
   sha256?: string | null
   createdAt?: Date | string
@@ -314,6 +328,7 @@ export type SourceUpdateInput = {
   type?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -330,6 +345,7 @@ export type SourceUncheckedUpdateInput = {
   type?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -346,6 +362,7 @@ export type SourceCreateManyInput = {
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
+  thumbnail?: string | null
   filename?: string | null
   sha256?: string | null
   createdAt?: Date | string
@@ -357,6 +374,7 @@ export type SourceUpdateManyMutationInput = {
   type?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -368,6 +386,7 @@ export type SourceUncheckedUpdateManyInput = {
   type?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -379,6 +398,7 @@ export type SourceCountOrderByAggregateInput = {
   type?: Prisma.SortOrder
   title?: Prisma.SortOrder
   url?: Prisma.SortOrder
+  thumbnail?: Prisma.SortOrder
   filename?: Prisma.SortOrder
   sha256?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -390,6 +410,7 @@ export type SourceMaxOrderByAggregateInput = {
   type?: Prisma.SortOrder
   title?: Prisma.SortOrder
   url?: Prisma.SortOrder
+  thumbnail?: Prisma.SortOrder
   filename?: Prisma.SortOrder
   sha256?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -401,6 +422,7 @@ export type SourceMinOrderByAggregateInput = {
   type?: Prisma.SortOrder
   title?: Prisma.SortOrder
   url?: Prisma.SortOrder
+  thumbnail?: Prisma.SortOrder
   filename?: Prisma.SortOrder
   sha256?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -503,6 +525,7 @@ export type SourceCreateWithoutTextsInput = {
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
+  thumbnail?: string | null
   filename?: string | null
   sha256?: string | null
   createdAt?: Date | string
@@ -518,6 +541,7 @@ export type SourceUncheckedCreateWithoutTextsInput = {
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
+  thumbnail?: string | null
   filename?: string | null
   sha256?: string | null
   createdAt?: Date | string
@@ -549,6 +573,7 @@ export type SourceUpdateWithoutTextsInput = {
   type?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -564,6 +589,7 @@ export type SourceUncheckedUpdateWithoutTextsInput = {
   type?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -579,6 +605,7 @@ export type SourceCreateWithoutNotesInput = {
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
+  thumbnail?: string | null
   filename?: string | null
   sha256?: string | null
   createdAt?: Date | string
@@ -594,6 +621,7 @@ export type SourceUncheckedCreateWithoutNotesInput = {
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
+  thumbnail?: string | null
   filename?: string | null
   sha256?: string | null
   createdAt?: Date | string
@@ -625,6 +653,7 @@ export type SourceUpdateWithoutNotesInput = {
   type?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -640,6 +669,7 @@ export type SourceUncheckedUpdateWithoutNotesInput = {
   type?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -655,6 +685,7 @@ export type SourceCreateWithoutFlashcardsInput = {
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
+  thumbnail?: string | null
   filename?: string | null
   sha256?: string | null
   createdAt?: Date | string
@@ -670,6 +701,7 @@ export type SourceUncheckedCreateWithoutFlashcardsInput = {
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
+  thumbnail?: string | null
   filename?: string | null
   sha256?: string | null
   createdAt?: Date | string
@@ -701,6 +733,7 @@ export type SourceUpdateWithoutFlashcardsInput = {
   type?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -716,6 +749,7 @@ export type SourceUncheckedUpdateWithoutFlashcardsInput = {
   type?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -731,6 +765,7 @@ export type SourceCreateWithoutQuizzesInput = {
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
+  thumbnail?: string | null
   filename?: string | null
   sha256?: string | null
   createdAt?: Date | string
@@ -746,6 +781,7 @@ export type SourceUncheckedCreateWithoutQuizzesInput = {
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
+  thumbnail?: string | null
   filename?: string | null
   sha256?: string | null
   createdAt?: Date | string
@@ -777,6 +813,7 @@ export type SourceUpdateWithoutQuizzesInput = {
   type?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -792,6 +829,7 @@ export type SourceUncheckedUpdateWithoutQuizzesInput = {
   type?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -807,6 +845,7 @@ export type SourceCreateWithoutThreadsInput = {
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
+  thumbnail?: string | null
   filename?: string | null
   sha256?: string | null
   createdAt?: Date | string
@@ -822,6 +861,7 @@ export type SourceUncheckedCreateWithoutThreadsInput = {
   type: $Enums.SourceType
   title?: string | null
   url?: string | null
+  thumbnail?: string | null
   filename?: string | null
   sha256?: string | null
   createdAt?: Date | string
@@ -853,6 +893,7 @@ export type SourceUpdateWithoutThreadsInput = {
   type?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -868,6 +909,7 @@ export type SourceUncheckedUpdateWithoutThreadsInput = {
   type?: Prisma.EnumSourceTypeFieldUpdateOperationsInput | $Enums.SourceType
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   filename?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -941,6 +983,7 @@ export type SourceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   type?: boolean
   title?: boolean
   url?: boolean
+  thumbnail?: boolean
   filename?: boolean
   sha256?: boolean
   createdAt?: boolean
@@ -958,6 +1001,7 @@ export type SourceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   type?: boolean
   title?: boolean
   url?: boolean
+  thumbnail?: boolean
   filename?: boolean
   sha256?: boolean
   createdAt?: boolean
@@ -969,6 +1013,7 @@ export type SourceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   type?: boolean
   title?: boolean
   url?: boolean
+  thumbnail?: boolean
   filename?: boolean
   sha256?: boolean
   createdAt?: boolean
@@ -980,12 +1025,13 @@ export type SourceSelectScalar = {
   type?: boolean
   title?: boolean
   url?: boolean
+  thumbnail?: boolean
   filename?: boolean
   sha256?: boolean
   createdAt?: boolean
 }
 
-export type SourceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ownerId" | "type" | "title" | "url" | "filename" | "sha256" | "createdAt", ExtArgs["result"]["source"]>
+export type SourceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ownerId" | "type" | "title" | "url" | "thumbnail" | "filename" | "sha256" | "createdAt", ExtArgs["result"]["source"]>
 export type SourceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   texts?: boolean | Prisma.Source$textsArgs<ExtArgs>
   notes?: boolean | Prisma.Source$notesArgs<ExtArgs>
@@ -1012,6 +1058,7 @@ export type $SourcePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     type: $Enums.SourceType
     title: string | null
     url: string | null
+    thumbnail: string | null
     filename: string | null
     sha256: string | null
     createdAt: Date
@@ -1448,6 +1495,7 @@ export interface SourceFieldRefs {
   readonly type: Prisma.FieldRef<"Source", 'SourceType'>
   readonly title: Prisma.FieldRef<"Source", 'String'>
   readonly url: Prisma.FieldRef<"Source", 'String'>
+  readonly thumbnail: Prisma.FieldRef<"Source", 'String'>
   readonly filename: Prisma.FieldRef<"Source", 'String'>
   readonly sha256: Prisma.FieldRef<"Source", 'String'>
   readonly createdAt: Prisma.FieldRef<"Source", 'DateTime'>

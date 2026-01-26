@@ -14,6 +14,7 @@ model Source {
   type       SourceType
   title      String?
   url        String?
+  thumbnail  String?
   filename   String?
   sha256     String?      @unique
   createdAt  DateTime     @default(now()) @db.Timestamptz(6)

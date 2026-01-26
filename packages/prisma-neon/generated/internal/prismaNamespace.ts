@@ -1198,6 +1198,7 @@ export const SourceScalarFieldEnum = {
   type: 'type',
   title: 'title',
   url: 'url',
+  thumbnail: 'thumbnail',
   filename: 'filename',
   sha256: 'sha256',
   createdAt: 'createdAt'
