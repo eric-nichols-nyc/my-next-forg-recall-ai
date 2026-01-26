@@ -47,7 +47,7 @@ export async function GET(
 
     const { id } = await params;
 
-    let note;
+    let note: Awaited<ReturnType<typeof database.note.findUnique>>;
     try {
       note = await database.note.findUnique({
         where: { sourceId: id },
@@ -62,10 +62,7 @@ export async function GET(
     }
 
     if (!note) {
-      return NextResponse.json(
-        { error: "Note not found." },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Note not found." }, { status: 404 });
     }
 
     // Verify the note belongs to the authenticated user
@@ -91,4 +88,3 @@ export async function GET(
     );
   }
 }
-

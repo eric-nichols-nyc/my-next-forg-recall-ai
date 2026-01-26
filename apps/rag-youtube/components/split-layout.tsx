@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   ResizableHandle,
@@ -7,13 +7,13 @@ import {
 } from "@repo/design-system/components/ui/resizable";
 
 type SplitLayoutProps = {
-  left: React.ReactNode
-  right: React.ReactNode
-}
+  left: React.ReactNode;
+  right: React.ReactNode;
+};
 
 export function SplitLayout({ left, right }: SplitLayoutProps) {
   return (
-    <ResizablePanelGroup direction="horizontal" className="h-full">
+    <ResizablePanelGroup className="h-full" direction="horizontal">
       <ResizablePanel defaultSize={60} minSize={30}>
         {left}
       </ResizablePanel>
@@ -22,6 +22,5 @@ export function SplitLayout({ left, right }: SplitLayoutProps) {
         {right}
       </ResizablePanel>
     </ResizablePanelGroup>
-  )
+  );
 }
-

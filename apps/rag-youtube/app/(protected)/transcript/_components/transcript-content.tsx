@@ -9,8 +9,8 @@ import {
 } from "@repo/design-system/components/ui/card";
 import { VideoIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { YouTubeActionsForm } from "./youtube-actions-form";
 import { TranscriptList } from "./transcript-list";
+import { YouTubeActionsForm } from "./youtube-actions-form";
 
 type Transcript = {
   id: string;
@@ -68,7 +68,7 @@ export function TranscriptContent({ transcripts }: TranscriptContentProps) {
         </div>
       ) : (
         <div className="flex flex-1 items-center justify-center p-8">
-          <p className="text-muted-foreground text-center">
+          <p className="text-center text-muted-foreground">
             No transcripts yet. Add your first YouTube video above to get
             started.
           </p>

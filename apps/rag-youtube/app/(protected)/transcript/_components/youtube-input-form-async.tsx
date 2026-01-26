@@ -20,6 +20,12 @@ type StatusResponse = {
   hasTexts?: boolean;
 };
 
+// Move regex patterns to top level for performance
+const VIDEO_ID_PATTERN = /^[a-zA-Z0-9_-]{11}$/;
+const URL_PATTERNS = [
+  /^https?:\/\/(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)[a-zA-Z0-9_-]{11}/,
+];
+
 /**
  * YouTube input form with async processing and polling
  * Submits YouTube URL, creates Source record immediately, then polls for transcript completion
@@ -29,7 +35,7 @@ export function YouTubeInputFormAsync({ onSuccess }: YouTubeInputFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isPolling, setIsPolling] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [sourceId, setSourceId] = useState<string | null>(null);
+  const [_sourceId, setSourceId] = useState<string | null>(null);
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Cleanup polling on unmount
@@ -44,18 +50,15 @@ export function YouTubeInputFormAsync({ onSuccess }: YouTubeInputFormProps) {
 
   const isValidYouTubeUrl = (string: string) => {
     const trimmed = string.trim();
-    const videoIdPattern = /^[a-zA-Z0-9_-]{11}$/;
-    const urlPatterns = [
-      /^https?:\/\/(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)[a-zA-Z0-9_-]{11}/,
-    ];
 
-    if (videoIdPattern.test(trimmed)) {
+    if (VIDEO_ID_PATTERN.test(trimmed)) {
       return true;
     }
 
-    return urlPatterns.some((pattern) => pattern.test(trimmed));
+    return URL_PATTERNS.some((pattern) => pattern.test(trimmed));
   };
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex polling logic requires multiple conditionals
   const checkStatus = async (checkSourceId: string): Promise<boolean> => {
     try {
       const response = await fetch(

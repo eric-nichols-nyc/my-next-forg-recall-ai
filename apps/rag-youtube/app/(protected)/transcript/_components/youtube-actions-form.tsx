@@ -8,12 +8,18 @@ import {
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Loader2 } from "lucide-react";
-import { useTransition, useState } from "react";
+import { useState, useTransition } from "react";
 import { importYoutube } from "../actions";
 
 type YouTubeActionsFormProps = {
   onSuccess: (noteId: string) => void;
 };
+
+// Move regex patterns to top level for performance
+const VIDEO_ID_PATTERN = /^[a-zA-Z0-9_-]{11}$/;
+const URL_PATTERNS = [
+  /^https?:\/\/(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)[a-zA-Z0-9_-]{11}/,
+];
 
 export function YouTubeActionsForm({ onSuccess }: YouTubeActionsFormProps) {
   const [url, setUrl] = useState("");
@@ -22,19 +28,15 @@ export function YouTubeActionsForm({ onSuccess }: YouTubeActionsFormProps) {
 
   const isValidYouTubeUrl = (string: string) => {
     const trimmed = string.trim();
-    const videoIdPattern = /^[a-zA-Z0-9_-]{11}$/;
-    const urlPatterns = [
-      /^https?:\/\/(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)[a-zA-Z0-9_-]{11}/,
-    ];
 
-    if (videoIdPattern.test(trimmed)) {
+    if (VIDEO_ID_PATTERN.test(trimmed)) {
       return true;
     }
 
-    return urlPatterns.some((pattern) => pattern.test(trimmed));
+    return URL_PATTERNS.some((pattern) => pattern.test(trimmed));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!url.trim()) {

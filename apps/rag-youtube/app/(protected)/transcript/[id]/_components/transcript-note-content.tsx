@@ -1,9 +1,9 @@
 "use client";
 
-import { Streamdown } from "streamdown";
-import { useRouter } from "next/navigation";
 import { Button } from "@repo/design-system/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Streamdown } from "streamdown";
 import type { NoteData } from "../actions";
 
 type TranscriptNoteContentProps = {
@@ -20,10 +20,10 @@ export function TranscriptNoteContent({ note }: TranscriptNoteContentProps) {
           <div className="space-y-3 border-border border-b pb-6">
             <div className="flex items-center gap-4">
               <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => router.push("/transcript")}
                 className="shrink-0"
+                onClick={() => router.push("/transcript")}
+                size="sm"
+                variant="ghost"
               >
                 <ArrowLeft className="size-4" />
                 Back
@@ -46,4 +46,3 @@ export function TranscriptNoteContent({ note }: TranscriptNoteContentProps) {
     </div>
   );
 }
-

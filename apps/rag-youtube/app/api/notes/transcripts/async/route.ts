@@ -52,8 +52,8 @@ async function getAuthenticatedUser(): Promise<User> {
  */
 async function triggerBrightDataRequest(
   videoUrl: string,
-  sourceId: string,
-  ownerId: string
+  _sourceId: string,
+  _ownerId: string
 ): Promise<void> {
   const apiKey = process.env.BRIGHT_DATA_API_KEY;
   const datasetId = process.env.BRIGHT_DATA_DATASET_ID;

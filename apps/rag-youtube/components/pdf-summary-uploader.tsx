@@ -1,6 +1,5 @@
 "use client";
 
-import type { ChatStatus, FileUIPart } from "ai";
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -12,10 +11,10 @@ import {
   PromptInputBody,
   PromptInputFooter,
   PromptInputHeader,
+  type PromptInputMessage,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
-  type PromptInputMessage,
 } from "@repo/design-system/components/ai-elements";
 import {
   Alert,
@@ -31,6 +30,7 @@ import {
   CardTitle,
 } from "@repo/design-system/components/ui/card";
 import { Separator } from "@repo/design-system/components/ui/separator";
+import type { ChatStatus, FileUIPart } from "ai";
 import { FileText, Loader2, ShieldCheck, Upload } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -45,9 +45,14 @@ const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 const ALLOWED_TYPES = ["application/pdf"];
 
 const formatBytes = (bytes: number) => {
-  if (bytes === 0) return "0 KB";
+  if (bytes === 0) {
+    return "0 KB";
+  }
   const sizes = ["Bytes", "KB", "MB", "GB"] as const;
-  const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), sizes.length - 1);
+  const i = Math.min(
+    Math.floor(Math.log(bytes) / Math.log(1024)),
+    sizes.length - 1
+  );
   const value = bytes / 1024 ** i;
   return `${value.toFixed(1)} ${sizes[i]}`;
 };
@@ -77,8 +82,12 @@ export function PdfSummaryUploader({ onSuccess }: PdfSummaryUploaderProps) {
   const [instructions, setInstructions] = useState<string>("");
 
   const submitStatus: ChatStatus | undefined = useMemo(() => {
-    if (isSubmitting) return "submitted";
-    if (error) return "error";
+    if (isSubmitting) {
+      return "submitted";
+    }
+    if (error) {
+      return "error";
+    }
     return "ready";
   }, [error, isSubmitting]);
 
@@ -92,7 +101,9 @@ export function PdfSummaryUploader({ onSuccess }: PdfSummaryUploaderProps) {
     }
 
     if (err.code === "max_file_size") {
-      setError(`Files must be smaller than ${formatBytes(MAX_FILE_SIZE_BYTES)}.`);
+      setError(
+        `Files must be smaller than ${formatBytes(MAX_FILE_SIZE_BYTES)}.`
+      );
       return;
     }
 
@@ -104,6 +115,7 @@ export function PdfSummaryUploader({ onSuccess }: PdfSummaryUploaderProps) {
     setError(err.message);
   };
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex form submission logic with multiple validation steps
   const handleSubmit = async (message: PromptInputMessage) => {
     setError(null);
     setSummary(null);
@@ -125,7 +137,9 @@ export function PdfSummaryUploader({ onSuccess }: PdfSummaryUploaderProps) {
       }
 
       if (file.size > MAX_FILE_SIZE_BYTES) {
-        setError(`Files must be smaller than ${formatBytes(MAX_FILE_SIZE_BYTES)}.`);
+        setError(
+          `Files must be smaller than ${formatBytes(MAX_FILE_SIZE_BYTES)}.`
+        );
         throw new Error("File too large");
       }
 
@@ -141,10 +155,13 @@ export function PdfSummaryUploader({ onSuccess }: PdfSummaryUploaderProps) {
         body: formData,
       });
 
-      const payload: SummaryResponse & { error?: string } = await response.json();
+      const payload: SummaryResponse & { error?: string } =
+        await response.json();
 
       if (!response.ok) {
-        setError(payload.error ?? "Unable to generate a summary for this file.");
+        setError(
+          payload.error ?? "Unable to generate a summary for this file."
+        );
         throw new Error(payload.error ?? "Summary request failed");
       }
 
@@ -163,8 +180,10 @@ export function PdfSummaryUploader({ onSuccess }: PdfSummaryUploaderProps) {
       }
     } catch (cause) {
       console.error("Summary upload failed", cause);
-      setError((prev) =>
-        prev ?? "Something went wrong while generating your summary. Please try again."
+      setError(
+        (prev) =>
+          prev ??
+          "Something went wrong while generating your summary. Please try again."
       );
       throw cause;
     } finally {
@@ -182,7 +201,8 @@ export function PdfSummaryUploader({ onSuccess }: PdfSummaryUploaderProps) {
           <div>
             <CardTitle>Summarize a PDF</CardTitle>
             <CardDescription>
-              Drop a PDF document to generate a markdown summary and see the saved identifiers.
+              Drop a PDF document to generate a markdown summary and see the
+              saved identifiers.
             </CardDescription>
           </div>
         </div>
@@ -190,7 +210,9 @@ export function PdfSummaryUploader({ onSuccess }: PdfSummaryUploaderProps) {
       <CardContent className="space-y-4">
         <div className="flex items-center gap-2 rounded-md bg-muted px-3 py-2 text-muted-foreground text-sm">
           <ShieldCheck className="size-4" />
-          <span>Protected route — only signed-in users can request summaries.</span>
+          <span>
+            Protected route — only signed-in users can request summaries.
+          </span>
         </div>
 
         <PromptInput
@@ -261,21 +283,28 @@ export function PdfSummaryUploader({ onSuccess }: PdfSummaryUploaderProps) {
           </Alert>
         ) : null}
 
+        {/* biome-ignore lint/nursery/noLeakedRender: summary and metadata are objects/strings, safe to render */}
         {summary && metadata ? (
           <Card className="border-primary/30 bg-primary/5">
             <CardHeader>
               <CardTitle className="flex flex-wrap items-center gap-2 text-lg">
                 Summary ready
-                <Badge variant="secondary">{metadata.pageCount ?? "?"} pages</Badge>
+                <Badge variant="secondary">
+                  {metadata.pageCount ?? "?"} pages
+                </Badge>
               </CardTitle>
               <CardDescription className="flex flex-wrap gap-2">
-                <Badge variant="outline">Summary ID: {metadata.summaryId}</Badge>
-                <Badge variant="outline">Document ID: {metadata.documentId}</Badge>
+                <Badge variant="outline">
+                  Summary ID: {metadata.summaryId}
+                </Badge>
+                <Badge variant="outline">
+                  Document ID: {metadata.documentId}
+                </Badge>
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <Separator />
-              <div className="prose prose-sm max-w-none whitespace-pre-wrap dark:prose-invert">
+              <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
                 {summary}
               </div>
             </CardContent>

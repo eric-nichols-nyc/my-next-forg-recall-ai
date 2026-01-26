@@ -99,6 +99,7 @@ type TranscriptItem = {
   duration: number;
 };
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex YouTube transcript fetching with multiple fallback strategies
 async function fetchYouTubeTranscript(
   videoUrl: string
 ): Promise<TranscriptItem[]> {

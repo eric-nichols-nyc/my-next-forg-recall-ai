@@ -103,4 +103,3 @@ export const TranscriptChat = ({ sourceId }: TranscriptChatProps) => {
     </div>
   );
 };
-

@@ -1,7 +1,7 @@
+import Firecrawl from "@mendable/firecrawl-js";
 import { getSession } from "@repo/neon-auth";
 import { database } from "@repo/prisma-neon";
 import { generateText } from "ai";
-import Firecrawl from "@mendable/firecrawl-js";
 import { NextResponse } from "next/server";
 import { model } from "@/lib/ai/models";
 
@@ -71,6 +71,7 @@ const extractTitleFromSummary = (summaryMd: string): string => {
   return "Untitled Note";
 };
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex web scraping with error handling and retries
 async function scrapeWebsite(url: string): Promise<string> {
   const apiKey = process.env.FIRECRAWL_API_KEY;
 
@@ -89,7 +90,9 @@ async function scrapeWebsite(url: string): Promise<string> {
     });
 
     if (!scrapeResult.markdown || scrapeResult.markdown.trim().length === 0) {
-      throw new Error("Failed to extract content from the website. The page may be empty or inaccessible.");
+      throw new Error(
+        "Failed to extract content from the website. The page may be empty or inaccessible."
+      );
     }
 
     return scrapeResult.markdown;
@@ -100,10 +103,18 @@ async function scrapeWebsite(url: string): Promise<string> {
       if (error.message.includes("API key")) {
         throw new Error("FireCrawl API key is invalid or missing.");
       }
-      if (error.message.includes("timeout") || error.message.includes("ETIMEDOUT")) {
-        throw new Error("Request timed out. The website may be slow or unreachable.");
+      if (
+        error.message.includes("timeout") ||
+        error.message.includes("ETIMEDOUT")
+      ) {
+        throw new Error(
+          "Request timed out. The website may be slow or unreachable."
+        );
       }
-      if (error.message.includes("404") || error.message.includes("not found")) {
+      if (
+        error.message.includes("404") ||
+        error.message.includes("not found")
+      ) {
         throw new Error("Website not found. Please check the URL.");
       }
       throw new Error(`Failed to scrape website: ${error.message}`);
@@ -187,6 +198,7 @@ async function createNoteFromWeb(
   }
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex POST handler with validation, scraping, and database operations
 export async function POST(request: Request) {
   try {
     let user: User;
@@ -269,7 +281,12 @@ export async function POST(request: Request) {
     // Save to database
     let dbResult: { sourceId: string; noteId: string };
     try {
-      dbResult = await createNoteFromWeb(user, scrapedContent, summaryMd, validUrl);
+      dbResult = await createNoteFromWeb(
+        user,
+        scrapedContent,
+        summaryMd,
+        validUrl
+      );
     } catch (error) {
       console.error("Error saving note:", error);
       return NextResponse.json(
@@ -296,4 +313,3 @@ export async function POST(request: Request) {
     );
   }
 }
-
