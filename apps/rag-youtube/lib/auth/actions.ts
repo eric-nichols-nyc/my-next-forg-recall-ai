@@ -1,14 +1,6 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-export type { SignInState, SignUpState } from "@repo/neon-auth";
-// biome-ignore lint/performance/noBarrelFile: Re-exporting for convenience
-export {
-  signInAction,
-  signOutAction,
-  signUpAction,
-} from "@repo/neon-auth";
-
 const signUpSchema = z.object({
   email: z
     .string()

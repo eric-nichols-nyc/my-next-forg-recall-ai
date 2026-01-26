@@ -47,7 +47,7 @@ export async function GET(
 
     const { id } = await params;
 
-    let note: Awaited<ReturnType<typeof database.note.findUnique>>;
+    let note;
     try {
       note = await database.note.findUnique({
         where: { sourceId: id },
