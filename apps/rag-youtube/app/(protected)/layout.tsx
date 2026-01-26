@@ -4,12 +4,8 @@ import { SidebarFooter } from "@repo/design-system/components/ui/sidebar";
 import {
   ArrowUp,
   FileText,
-  Folder,
   Infinity as InfinityIcon,
   LayoutDashboard,
-  MessageSquare,
-  Settings,
-  Star,
 } from "lucide-react";
 import { redirect } from "next/navigation";
 import {
@@ -35,29 +31,9 @@ export default async function ProtectedLayout({
       icon: <LayoutDashboard />,
     },
     {
-      title: "Folders",
-      url: "/folders",
-      icon: <Folder />,
-    },
-    {
       title: "Notes",
-      url: "/notes",
+      url: "/transcript",
       icon: <FileText />,
-    },
-    {
-      title: "Focus",
-      url: "/focus",
-      icon: <Star />,
-    },
-    {
-      title: "Chat",
-      url: "/chat",
-      icon: <MessageSquare />,
-    },
-    {
-      title: "Settings",
-      url: "/settings",
-      icon: <Settings />,
     },
   ];
 
