@@ -1,4 +1,5 @@
 import { openai } from "@ai-sdk/openai";
+import type { LanguageModel } from "ai";
 
 /**
  * This file defines which AI model we'll use.
@@ -12,7 +13,7 @@ import { openai } from "@ai-sdk/openai";
  * Later you can swap this for other models (Claude, Gemini, etc.)
  */
 
-export const model = openai("gpt-4o-mini");
+export const model: LanguageModel = openai("gpt-4o-mini");
 
 /**
  * Model explanation:
