@@ -1,8 +1,6 @@
 import { neonAuth } from "@neondatabase/neon-js/auth/next";
-import { Button } from "@repo/design-system/components/ui/button";
 import { SidebarFooter } from "@repo/design-system/components/ui/sidebar";
 import {
-  ArrowUp,
   FileText,
   Infinity as InfinityIcon,
   LayoutDashboard,
@@ -31,7 +29,7 @@ export default async function ProtectedLayout({
       icon: <LayoutDashboard />,
     },
     {
-      title: "Notes",
+      title: "Transcripts",
       url: "/transcript",
       icon: <FileText />,
     },
@@ -41,11 +39,7 @@ export default async function ProtectedLayout({
     <DashboardLayout
       navigationItems={navItems}
       sidebarFooter={
-        <SidebarFooter className="space-y-4">
-          <Button className="w-full bg-purple-600 text-white hover:bg-purple-700">
-            <ArrowUp className="mr-2 size-4" />
-            Upgrade to Premium
-          </Button>
+        <SidebarFooter>
           <div className="flex items-center gap-3 px-2">
             <div className="flex size-10 items-center justify-center rounded-full bg-teal-500 font-semibold text-white">
               E
