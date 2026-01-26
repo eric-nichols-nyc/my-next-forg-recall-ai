@@ -32,6 +32,7 @@ export type NoteData = {
   title: string;
   summaryMd: string;
   createdAt: Date;
+  url: string | null;
 };
 
 export async function getNoteById(noteId: string): Promise<NoteData | null> {
@@ -58,6 +59,7 @@ export async function getNoteById(noteId: string): Promise<NoteData | null> {
       title: note.title ?? note.source?.title ?? "Untitled Note",
       summaryMd: note.summaryMd,
       createdAt: note.createdAt,
+      url: note.source?.url ?? null,
     };
   } catch (error) {
     console.error("Error fetching note:", error);

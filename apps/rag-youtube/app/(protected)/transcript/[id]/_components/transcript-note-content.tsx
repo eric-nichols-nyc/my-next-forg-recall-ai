@@ -6,12 +6,37 @@ import { useRouter } from "next/navigation";
 import { Streamdown } from "streamdown";
 import type { NoteData } from "../actions";
 
+// Regex patterns for extracting YouTube video ID
+const VIDEO_ID_PATTERN = /^[a-zA-Z0-9_-]{11}$/;
+const YOUTUBE_URL_PATTERN =
+  /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([a-zA-Z0-9_-]{11})/;
+
+function extractVideoId(urlOrId: string | null): string | null {
+  if (!urlOrId) return null;
+
+  const trimmed = urlOrId.trim();
+
+  // If it's already a video ID (11 characters, alphanumeric and hyphens/underscores)
+  if (VIDEO_ID_PATTERN.test(trimmed)) {
+    return trimmed;
+  }
+
+  // Try to extract from various YouTube URL formats
+  const match = trimmed.match(YOUTUBE_URL_PATTERN);
+  if (match?.[1]) {
+    return match[1];
+  }
+
+  return null;
+}
+
 type TranscriptNoteContentProps = {
   note: NoteData;
 };
 
 export function TranscriptNoteContent({ note }: TranscriptNoteContentProps) {
   const router = useRouter();
+  const videoId = extractVideoId(note.url);
 
   return (
     <div className="flex h-full flex-col">
@@ -38,6 +63,17 @@ export function TranscriptNoteContent({ note }: TranscriptNoteContentProps) {
               </div>
             </div>
           </div>
+          {videoId && (
+            <div className="aspect-video w-full overflow-hidden rounded-lg">
+              <iframe
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="h-full w-full"
+                src={`https://www.youtube.com/embed/${videoId}`}
+                title={note.title}
+              />
+            </div>
+          )}
           <div className="prose prose-lg dark:prose-invert max-w-none">
             <Streamdown>{note.summaryMd}</Streamdown>
           </div>
