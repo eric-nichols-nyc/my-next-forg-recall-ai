@@ -10,7 +10,7 @@
 // import { Database } from "lucide-react";
 // import Link from "next/link";
 import { SplitLayout } from "../components/split-layout";
-import { YouTubeTranscriptViewer } from "./(protected)/notes/_components/youtube-transcript-viewer";
+import { YouTubeTranscriptViewer } from "./_components/youtube-transcript-viewer";
 
 const HomePage = async () => {
   // const { session } = await neonAuth();
@@ -62,7 +62,7 @@ const HomePage = async () => {
   //           This app demonstrates authentication with Neon database integration.
   //         </p>
   //         <Button asChild className="w-full">
-  //           <Link href={isLoggedIn ? "/notes" : "/auth/sign-in"}>
+  //           <Link href={isLoggedIn ? "/transcript" : "/auth/sign-in"}>
   //             {isLoggedIn ? "Get Started" : "Sign In"}
   //           </Link>
   //         </Button>
