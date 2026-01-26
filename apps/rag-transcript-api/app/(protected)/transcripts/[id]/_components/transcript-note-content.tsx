@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { Streamdown } from "streamdown";
-import type { NoteData } from "../actions";
+import type { NoteData } from "@/actions/get-note-by-id.action";
 import { EditableTitle } from "./editable-title";
 
 // Regex patterns for extracting YouTube video ID
@@ -63,7 +63,7 @@ export function TranscriptNoteContent({ note }: TranscriptNoteContentProps) {
             <div className="flex items-center gap-4">
               <Button
                 className="shrink-0"
-                onClick={() => router.push("/transcript")}
+                onClick={() => router.push("/transcripts")}
                 size="sm"
                 variant="ghost"
               >

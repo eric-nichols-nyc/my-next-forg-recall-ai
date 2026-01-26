@@ -11,7 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { deleteTranscript } from "../actions";
+import { deleteTranscript } from "@/actions/delete-transcript.action";
 
 const FALLBACK_IMAGE_URL =
   "https://4poo5cpwk1.ufs.sh/f/PXOpqElmK39N7XoZycQKqjNSJYQmEZUs2Ha9iDktxngef84r";
@@ -137,7 +137,7 @@ export function TranscriptCard({ transcript }: TranscriptCardProps) {
       key={transcript.id}
     >
       {note ? (
-        <Link href={`/transcript/${note.id}`}>{cardContent}</Link>
+        <Link href={`/transcripts/${note.id}`}>{cardContent}</Link>
       ) : (
         cardContent
       )}

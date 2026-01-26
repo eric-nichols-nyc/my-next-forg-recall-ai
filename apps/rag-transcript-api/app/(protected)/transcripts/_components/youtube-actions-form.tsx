@@ -9,7 +9,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { useState, useTransition } from "react";
-import { importYoutube } from "../actions";
+import { importYoutube } from "@/actions/import-youtube.action";
 
 type YouTubeActionsFormProps = {
   onSuccess: (noteId: string) => void;

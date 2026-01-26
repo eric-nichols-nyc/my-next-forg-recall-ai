@@ -5,7 +5,8 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
-import { updateNoteTitle } from "../actions";
+import { toast } from "sonner";
+import { updateNoteTitle } from "@/actions/update-note-title.action";
 
 type EditableTitleProps = {
   noteId: string;
@@ -44,7 +45,7 @@ export function EditableTitle({ noteId, initialTitle }: EditableTitleProps) {
       } catch (error) {
         console.error("Failed to update title:", error);
         setTitle(initialTitle); // Revert on error
-        alert(
+        toast.error(
           error instanceof Error
             ? error.message
             : "Failed to update title. Please try again."

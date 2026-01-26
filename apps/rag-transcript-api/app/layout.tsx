@@ -1,4 +1,5 @@
 import { NeonAuthUIProvider } from "@neondatabase/neon-js/auth/react/ui";
+import { Toaster } from "@repo/design-system/components/ui/sonner";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { authClient } from "@/lib/auth/client";
@@ -35,6 +36,7 @@ export default function RootLayout({
           redirectTo="/account/settings"
         >
           {children}
+          <Toaster />
         </NeonAuthUIProvider>
       </body>
     </html>

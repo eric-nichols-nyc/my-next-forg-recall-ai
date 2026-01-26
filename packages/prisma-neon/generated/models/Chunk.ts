@@ -220,6 +220,7 @@ export type ChunkWhereInput = {
   chunkIndex?: Prisma.IntFilter<"Chunk"> | number
   text?: Prisma.StringNullableFilter<"Chunk"> | string | null
   metadata?: Prisma.JsonNullableFilter<"Chunk">
+  source?: Prisma.XOR<Prisma.SourceScalarRelationFilter, Prisma.SourceWhereInput>
 }
 
 export type ChunkOrderByWithRelationInput = {
@@ -229,6 +230,7 @@ export type ChunkOrderByWithRelationInput = {
   chunkIndex?: Prisma.SortOrder
   text?: Prisma.SortOrderInput | Prisma.SortOrder
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
+  source?: Prisma.SourceOrderByWithRelationInput
 }
 
 export type ChunkWhereUniqueInput = Prisma.AtLeast<{
@@ -242,6 +244,7 @@ export type ChunkWhereUniqueInput = Prisma.AtLeast<{
   chunkIndex?: Prisma.IntFilter<"Chunk"> | number
   text?: Prisma.StringNullableFilter<"Chunk"> | string | null
   metadata?: Prisma.JsonNullableFilter<"Chunk">
+  source?: Prisma.XOR<Prisma.SourceScalarRelationFilter, Prisma.SourceWhereInput>
 }, "id" | "sourceId_chunkIndex">
 
 export type ChunkOrderByWithAggregationInput = {
@@ -273,10 +276,10 @@ export type ChunkScalarWhereWithAggregatesInput = {
 export type ChunkCreateInput = {
   id?: string
   ownerId?: string
-  sourceId: string
   chunkIndex: number
   text?: string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  source: Prisma.SourceCreateNestedOneWithoutChunksInput
 }
 
 export type ChunkUncheckedCreateInput = {
@@ -291,10 +294,10 @@ export type ChunkUncheckedCreateInput = {
 export type ChunkUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
-  sourceId?: Prisma.StringFieldUpdateOperationsInput | string
   chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
   text?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  source?: Prisma.SourceUpdateOneRequiredWithoutChunksNestedInput
 }
 
 export type ChunkUncheckedUpdateInput = {
@@ -318,7 +321,6 @@ export type ChunkCreateManyInput = {
 export type ChunkUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
-  sourceId?: Prisma.StringFieldUpdateOperationsInput | string
   chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
   text?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -331,6 +333,16 @@ export type ChunkUncheckedUpdateManyInput = {
   chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
   text?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+}
+
+export type ChunkListRelationFilter = {
+  every?: Prisma.ChunkWhereInput
+  some?: Prisma.ChunkWhereInput
+  none?: Prisma.ChunkWhereInput
+}
+
+export type ChunkOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type ChunkSourceIdChunkIndexCompoundUniqueInput = {
@@ -371,6 +383,134 @@ export type ChunkSumOrderByAggregateInput = {
   chunkIndex?: Prisma.SortOrder
 }
 
+export type ChunkCreateNestedManyWithoutSourceInput = {
+  create?: Prisma.XOR<Prisma.ChunkCreateWithoutSourceInput, Prisma.ChunkUncheckedCreateWithoutSourceInput> | Prisma.ChunkCreateWithoutSourceInput[] | Prisma.ChunkUncheckedCreateWithoutSourceInput[]
+  connectOrCreate?: Prisma.ChunkCreateOrConnectWithoutSourceInput | Prisma.ChunkCreateOrConnectWithoutSourceInput[]
+  createMany?: Prisma.ChunkCreateManySourceInputEnvelope
+  connect?: Prisma.ChunkWhereUniqueInput | Prisma.ChunkWhereUniqueInput[]
+}
+
+export type ChunkUncheckedCreateNestedManyWithoutSourceInput = {
+  create?: Prisma.XOR<Prisma.ChunkCreateWithoutSourceInput, Prisma.ChunkUncheckedCreateWithoutSourceInput> | Prisma.ChunkCreateWithoutSourceInput[] | Prisma.ChunkUncheckedCreateWithoutSourceInput[]
+  connectOrCreate?: Prisma.ChunkCreateOrConnectWithoutSourceInput | Prisma.ChunkCreateOrConnectWithoutSourceInput[]
+  createMany?: Prisma.ChunkCreateManySourceInputEnvelope
+  connect?: Prisma.ChunkWhereUniqueInput | Prisma.ChunkWhereUniqueInput[]
+}
+
+export type ChunkUpdateManyWithoutSourceNestedInput = {
+  create?: Prisma.XOR<Prisma.ChunkCreateWithoutSourceInput, Prisma.ChunkUncheckedCreateWithoutSourceInput> | Prisma.ChunkCreateWithoutSourceInput[] | Prisma.ChunkUncheckedCreateWithoutSourceInput[]
+  connectOrCreate?: Prisma.ChunkCreateOrConnectWithoutSourceInput | Prisma.ChunkCreateOrConnectWithoutSourceInput[]
+  upsert?: Prisma.ChunkUpsertWithWhereUniqueWithoutSourceInput | Prisma.ChunkUpsertWithWhereUniqueWithoutSourceInput[]
+  createMany?: Prisma.ChunkCreateManySourceInputEnvelope
+  set?: Prisma.ChunkWhereUniqueInput | Prisma.ChunkWhereUniqueInput[]
+  disconnect?: Prisma.ChunkWhereUniqueInput | Prisma.ChunkWhereUniqueInput[]
+  delete?: Prisma.ChunkWhereUniqueInput | Prisma.ChunkWhereUniqueInput[]
+  connect?: Prisma.ChunkWhereUniqueInput | Prisma.ChunkWhereUniqueInput[]
+  update?: Prisma.ChunkUpdateWithWhereUniqueWithoutSourceInput | Prisma.ChunkUpdateWithWhereUniqueWithoutSourceInput[]
+  updateMany?: Prisma.ChunkUpdateManyWithWhereWithoutSourceInput | Prisma.ChunkUpdateManyWithWhereWithoutSourceInput[]
+  deleteMany?: Prisma.ChunkScalarWhereInput | Prisma.ChunkScalarWhereInput[]
+}
+
+export type ChunkUncheckedUpdateManyWithoutSourceNestedInput = {
+  create?: Prisma.XOR<Prisma.ChunkCreateWithoutSourceInput, Prisma.ChunkUncheckedCreateWithoutSourceInput> | Prisma.ChunkCreateWithoutSourceInput[] | Prisma.ChunkUncheckedCreateWithoutSourceInput[]
+  connectOrCreate?: Prisma.ChunkCreateOrConnectWithoutSourceInput | Prisma.ChunkCreateOrConnectWithoutSourceInput[]
+  upsert?: Prisma.ChunkUpsertWithWhereUniqueWithoutSourceInput | Prisma.ChunkUpsertWithWhereUniqueWithoutSourceInput[]
+  createMany?: Prisma.ChunkCreateManySourceInputEnvelope
+  set?: Prisma.ChunkWhereUniqueInput | Prisma.ChunkWhereUniqueInput[]
+  disconnect?: Prisma.ChunkWhereUniqueInput | Prisma.ChunkWhereUniqueInput[]
+  delete?: Prisma.ChunkWhereUniqueInput | Prisma.ChunkWhereUniqueInput[]
+  connect?: Prisma.ChunkWhereUniqueInput | Prisma.ChunkWhereUniqueInput[]
+  update?: Prisma.ChunkUpdateWithWhereUniqueWithoutSourceInput | Prisma.ChunkUpdateWithWhereUniqueWithoutSourceInput[]
+  updateMany?: Prisma.ChunkUpdateManyWithWhereWithoutSourceInput | Prisma.ChunkUpdateManyWithWhereWithoutSourceInput[]
+  deleteMany?: Prisma.ChunkScalarWhereInput | Prisma.ChunkScalarWhereInput[]
+}
+
+export type ChunkCreateWithoutSourceInput = {
+  id?: string
+  ownerId?: string
+  chunkIndex: number
+  text?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+}
+
+export type ChunkUncheckedCreateWithoutSourceInput = {
+  id?: string
+  ownerId?: string
+  chunkIndex: number
+  text?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+}
+
+export type ChunkCreateOrConnectWithoutSourceInput = {
+  where: Prisma.ChunkWhereUniqueInput
+  create: Prisma.XOR<Prisma.ChunkCreateWithoutSourceInput, Prisma.ChunkUncheckedCreateWithoutSourceInput>
+}
+
+export type ChunkCreateManySourceInputEnvelope = {
+  data: Prisma.ChunkCreateManySourceInput | Prisma.ChunkCreateManySourceInput[]
+  skipDuplicates?: boolean
+}
+
+export type ChunkUpsertWithWhereUniqueWithoutSourceInput = {
+  where: Prisma.ChunkWhereUniqueInput
+  update: Prisma.XOR<Prisma.ChunkUpdateWithoutSourceInput, Prisma.ChunkUncheckedUpdateWithoutSourceInput>
+  create: Prisma.XOR<Prisma.ChunkCreateWithoutSourceInput, Prisma.ChunkUncheckedCreateWithoutSourceInput>
+}
+
+export type ChunkUpdateWithWhereUniqueWithoutSourceInput = {
+  where: Prisma.ChunkWhereUniqueInput
+  data: Prisma.XOR<Prisma.ChunkUpdateWithoutSourceInput, Prisma.ChunkUncheckedUpdateWithoutSourceInput>
+}
+
+export type ChunkUpdateManyWithWhereWithoutSourceInput = {
+  where: Prisma.ChunkScalarWhereInput
+  data: Prisma.XOR<Prisma.ChunkUpdateManyMutationInput, Prisma.ChunkUncheckedUpdateManyWithoutSourceInput>
+}
+
+export type ChunkScalarWhereInput = {
+  AND?: Prisma.ChunkScalarWhereInput | Prisma.ChunkScalarWhereInput[]
+  OR?: Prisma.ChunkScalarWhereInput[]
+  NOT?: Prisma.ChunkScalarWhereInput | Prisma.ChunkScalarWhereInput[]
+  id?: Prisma.UuidFilter<"Chunk"> | string
+  ownerId?: Prisma.UuidFilter<"Chunk"> | string
+  sourceId?: Prisma.UuidFilter<"Chunk"> | string
+  chunkIndex?: Prisma.IntFilter<"Chunk"> | number
+  text?: Prisma.StringNullableFilter<"Chunk"> | string | null
+  metadata?: Prisma.JsonNullableFilter<"Chunk">
+}
+
+export type ChunkCreateManySourceInput = {
+  id?: string
+  ownerId?: string
+  chunkIndex: number
+  text?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+}
+
+export type ChunkUpdateWithoutSourceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  text?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+}
+
+export type ChunkUncheckedUpdateWithoutSourceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  text?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+}
+
+export type ChunkUncheckedUpdateManyWithoutSourceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  text?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+}
+
 
 
 export type ChunkSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -380,6 +520,7 @@ export type ChunkSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   chunkIndex?: boolean
   text?: boolean
   metadata?: boolean
+  source?: boolean | Prisma.SourceDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["chunk"]>
 
 export type ChunkSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -389,6 +530,7 @@ export type ChunkSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   chunkIndex?: boolean
   text?: boolean
   metadata?: boolean
+  source?: boolean | Prisma.SourceDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["chunk"]>
 
 export type ChunkSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -398,6 +540,7 @@ export type ChunkSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   chunkIndex?: boolean
   text?: boolean
   metadata?: boolean
+  source?: boolean | Prisma.SourceDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["chunk"]>
 
 export type ChunkSelectScalar = {
@@ -410,10 +553,21 @@ export type ChunkSelectScalar = {
 }
 
 export type ChunkOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ownerId" | "sourceId" | "chunkIndex" | "text" | "metadata", ExtArgs["result"]["chunk"]>
+export type ChunkInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  source?: boolean | Prisma.SourceDefaultArgs<ExtArgs>
+}
+export type ChunkIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  source?: boolean | Prisma.SourceDefaultArgs<ExtArgs>
+}
+export type ChunkIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  source?: boolean | Prisma.SourceDefaultArgs<ExtArgs>
+}
 
 export type $ChunkPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Chunk"
-  objects: {}
+  objects: {
+    source: Prisma.$SourcePayload<ExtArgs>
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     ownerId: string
@@ -815,6 +969,7 @@ readonly fields: ChunkFieldRefs;
  */
 export interface Prisma__ChunkClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  source<T extends Prisma.SourceDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SourceDefaultArgs<ExtArgs>>): Prisma.Prisma__SourceClient<runtime.Types.Result.GetResult<Prisma.$SourcePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -867,6 +1022,10 @@ export type ChunkFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Interna
    */
   omit?: Prisma.ChunkOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChunkInclude<ExtArgs> | null
+  /**
    * Filter, which Chunk to fetch.
    */
   where: Prisma.ChunkWhereUniqueInput
@@ -885,6 +1044,10 @@ export type ChunkFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions.
    */
   omit?: Prisma.ChunkOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChunkInclude<ExtArgs> | null
+  /**
    * Filter, which Chunk to fetch.
    */
   where: Prisma.ChunkWhereUniqueInput
@@ -902,6 +1065,10 @@ export type ChunkFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the Chunk
    */
   omit?: Prisma.ChunkOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChunkInclude<ExtArgs> | null
   /**
    * Filter, which Chunk to fetch.
    */
@@ -951,6 +1118,10 @@ export type ChunkFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.ChunkOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChunkInclude<ExtArgs> | null
+  /**
    * Filter, which Chunk to fetch.
    */
   where?: Prisma.ChunkWhereInput
@@ -999,6 +1170,10 @@ export type ChunkFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   omit?: Prisma.ChunkOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChunkInclude<ExtArgs> | null
+  /**
    * Filter, which Chunks to fetch.
    */
   where?: Prisma.ChunkWhereInput
@@ -1042,6 +1217,10 @@ export type ChunkCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    */
   omit?: Prisma.ChunkOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChunkInclude<ExtArgs> | null
+  /**
    * The data needed to create a Chunk.
    */
   data: Prisma.XOR<Prisma.ChunkCreateInput, Prisma.ChunkUncheckedCreateInput>
@@ -1075,6 +1254,10 @@ export type ChunkCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    */
   data: Prisma.ChunkCreateManyInput | Prisma.ChunkCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChunkIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1089,6 +1272,10 @@ export type ChunkUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Chunk
    */
   omit?: Prisma.ChunkOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChunkInclude<ExtArgs> | null
   /**
    * The data needed to update a Chunk.
    */
@@ -1141,6 +1328,10 @@ export type ChunkUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many Chunks to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChunkIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1155,6 +1346,10 @@ export type ChunkUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Chunk
    */
   omit?: Prisma.ChunkOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChunkInclude<ExtArgs> | null
   /**
    * The filter to search for the Chunk to update in case it exists.
    */
@@ -1181,6 +1376,10 @@ export type ChunkDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Chunk
    */
   omit?: Prisma.ChunkOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChunkInclude<ExtArgs> | null
   /**
    * Filter which Chunk to delete.
    */
@@ -1213,4 +1412,8 @@ export type ChunkDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Omit specific fields from the Chunk
    */
   omit?: Prisma.ChunkOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChunkInclude<ExtArgs> | null
 }

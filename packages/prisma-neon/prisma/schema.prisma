@@ -23,6 +23,7 @@ model Source {
   flashcards Flashcard[]
   quizzes    Quiz[]
   threads    ChatThread[]
+  chunks     Chunk[]
 
   @@index([ownerId])
   @@index([type])
@@ -140,6 +141,7 @@ model Chunk {
   text       String?
   metadata   Json?
   embedding  Unsupported("vector")?
+  source     Source                 @relation(fields: [sourceId], references: [id], onDelete: Cascade)
 
   @@unique([sourceId, chunkIndex])
   @@index([ownerId])

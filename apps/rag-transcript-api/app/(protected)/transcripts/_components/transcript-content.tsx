@@ -35,7 +35,7 @@ export function TranscriptContent({ transcripts }: TranscriptContentProps) {
   const handleSuccess = (noteId: string) => {
     console.log("noteId =", noteId);
     // Navigate to the note page when transcript is ready
-    router.push(`/transcript/${noteId}`);
+    router.push(`/transcripts/${noteId}`);
   };
 
   const hasTranscripts = transcripts.length > 0;
