@@ -100,7 +100,7 @@ export function TranscriptCard({ transcript }: TranscriptCardProps) {
     <>
       <CardHeader>
         <div className="flex items-start gap-4">
-          <div className="relative size-32 shrink-0 overflow-hidden rounded-lg">
+          <div className="relative aspect-video w-48 shrink-0 overflow-hidden rounded-lg">
             <Image
               alt={displayTitle}
               className="object-cover"
